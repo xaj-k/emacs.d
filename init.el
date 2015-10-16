@@ -492,6 +492,9 @@ for project root directories.")
     (use-package ido-ubiquitous :ensure t)
     (ido-ubiquitous-mode)
 
+    (use-package helm-ag :ensure t)
+    (customize-set-variable 'helm-ag-base-command "ack --nocolor --nogroup")
+
     ) ;; end with-demote-errors
   ) ;; end emacs 24.3+ customizations
 

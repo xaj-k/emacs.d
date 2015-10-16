@@ -196,9 +196,7 @@ popwin
 pos-tip
 powerline
 projectile
-queue
-rainbow-delimiters
-s
+rainbow-mode
 sh-extra-font-lock
 slime
 slime-company
@@ -209,9 +207,7 @@ undo-tree
 use-package
 visual-regexp
 visual-regexp-steroids
-web-completion-data
-web-mode
-with-editor
+vlf
 ws-butler
 yasnippet
 zenburn-theme
