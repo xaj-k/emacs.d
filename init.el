@@ -226,6 +226,8 @@
     (interactive)
     (mc/create-fake-cursor-at-point))
 
+  (define-key mc/keymap (kbd "M-x") 'execute-extended-command)
+
   (define-key my-map (kbd "C->") 'mc/mark-next-like-this)
   (define-key my-map (kbd "C-<") 'mc/mark-previous-like-this)
   (define-key my-map (kbd "C-c C-<") 'mc/mark-all-like-this)
@@ -272,10 +274,10 @@
   ;; Enable column markers at column 81 to warn of long lines
   ;; (source: http://www.emacswiki.org/emacs/download/column-marker.el)
   (use-package column-marker :ensure t)
-  (defun nispio/column-marker-at-81 ()
+  (defun nispio/column-marker-at-91 ()
     (interactive)
-    (column-marker-1 81))
-  (add-hook 'prog-mode-hook 'nispio/column-marker-at-81)
+    (column-marker-1 91))
+  (add-hook 'prog-mode-hook 'nispio/column-marker-at-91)
   (setq-default fill-column 80)
 
 
@@ -322,14 +324,14 @@
     (electric-pair-mode 1) ; Enable automatic bracket closing
 
     (require 'nispio/helm-config)
+    (define-key my-map (kbd "C-8") helm-command-map)
+    (define-key helm-command-map (kbd "C-SPC") 'helm-resume)
     (define-key helm-map (kbd "M-1") 'nispio/helm-full-frame)
     (define-key my-map (kbd "M-s n") 'find-name-dired)
     (define-key my-map (kbd "C-h b") 'helm-descbinds)
-    (define-key my-map (kbd "C-8") helm-command-map)
     (define-key my-map (kbd "C-h a") 'helm-apropos) ;; Replaces apropos-command
     (define-key my-map (kbd "C-h p") 'helm-list-elisp-packages)
     (define-key my-map (kbd "M-s b") 'nispio/helm-moccur-buffers)
-    (define-key my-map (kbd "M-s a") 'helm-do-grep)
     (define-key my-map (kbd "M-s o") 'helm-occur) ;; Replaces occur
     (define-key my-map (kbd "M-s O") 'helm-multi-occur)
     (define-key my-map (kbd "M-s r") 'helm-register)
@@ -346,6 +348,9 @@
       (define-key map (kbd "H-M-s i") 'helm-swoop-from-isearch)
       (define-key map (kbd "H-M-s B") 'helm-multi-swoop-all-from-isearch))
 
+    (use-package helm-ag :ensure t)
+    (define-key my-map (kbd "M-s A") 'helm-do-ag)
+    (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
 
     ;; Use a more powerful alternative to ido-mode's flex matching.
     ;; SOURCE: https://github.com/lewang/flx.git
@@ -477,7 +482,7 @@ for project root directories.")
 
     ;; Commands for working with regexps with visual feedback
     (use-package visual-regexp :ensure t)
-    (use-package visual-regexp-steroids :ensure t)
+    ;(use-package visual-regexp-steroids :ensure t)
     (define-key my-map (kbd "C-c M-5") 'vr/replace)
     (define-key my-map (kbd "C-c M-%") 'vr/query-replace)
 

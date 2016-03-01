@@ -9,6 +9,7 @@
 		TeX-insert-dollar
 		TeX-insert-sub-or-superscript
 		backward-sexp
+		backward-symbol
 		backward-up-list
 		beginning-of-visual-line
 		c-electric-brace
@@ -20,6 +21,7 @@
 		c-electric-semi&comma
 		c-electric-slash
 		c-electric-star
+		c-fill-paragraph
 		c-indent-line-or-region
 		comment-dwim
 		comment-region
@@ -41,6 +43,7 @@
 		fill-paragraph
 		forward-sentence
 		forward-sexp
+		forward-symbol
 		highlight-symbol-at-point
 		indent-for-tab-command
 		kill-rectangle
@@ -53,6 +56,7 @@
 		matlab-forward-sexp
 		matlab-linefeed
 		nispio/eval-and-replace
+		nispio/stop-debugging
 		org-backward-sentence
 		org-beginning-of-line
 		org-cycle
@@ -87,6 +91,7 @@
 		upcase-region
 		wdired-upcase-word
 		yank-rectangle
+		yas-expand
 		))
 
 (setq mc/cmds-to-run-once
@@ -115,6 +120,7 @@
 		next-multiframe-window
 		nispio/compile-c
 		nispio/other-window
+		org-agenda
 		org-ctrl-c-ctrl-c
 		overwrite-mode
 		pop-global-mark

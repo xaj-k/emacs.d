@@ -1,10 +1,14 @@
 (require 'nispio/misc-utils)
 
-;; Set up indenting in C/C++
-(setq c-default-style "linux")
 (setq-default c-basic-offset 4)
 (setq-default tab-width 4)
-(c-set-offset 'inline-open 0)
+
+;; Set up indenting in C/C++
+(defconst my-cc-style
+  '("linux"
+	(c-offsets-alist . ((innamespace . [0])))))
+(c-add-style "my-cc-style" my-cc-style)
+(setq c-default-style "my-cc-style")
 
 (setq comint-scroll-to-bottom-on-input t)
 (setq compilation-scroll-output 'first-error)
@@ -21,7 +25,8 @@
 ;; Shortcut for opening and closing braces in c-mode
 (defun nispio/insert-braces ()
   (interactive)
-  (execute-kbd-macro '[return 123 tab return 125 tab 16 tab]))
+  (just-one-space)
+  (execute-kbd-macro '[123 return return 125 tab 16 tab]))
 (defun nispio/insert-braces-hook ()
   (local-set-key (kbd "<C-m>") 'nispio/insert-braces))
 (add-hook 'c-mode-common-hook 'nispio/insert-braces-hook)

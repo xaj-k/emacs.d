@@ -835,3 +835,22 @@ of the day at point (if any) or the current HH:MM time."
 
 
 
+
+ ;;pdb setup, note the python version
+ (setq pdb-path '/usr/lib/python2.5/pdb.py
+       gud-pdb-command-name (symbol-name pdb-path))
+ (defadvice pdb (before gud-query-cmdline activate)
+   "Provide a better default command line when called interactively."
+   (interactive
+    (list (gud-query-cmdline gud-pdb-command-name
+							 (file-name-nondirectory buffer-file-name)))))
+
+
+(defun noop () (interactive))
+(define-key my-map (kbd "C-n") 'noop)
+(define-key my-map (kbd "C-p") 'noop)
+(define-key my-map (kbd "<C-tab>") 'noop)
+
+(define-key my-map (kbd "C-n") 'next-line)
+(define-key my-map (kbd "C-p") 'previous-line)
+(define-key my-map (kbd "<C-tab>") 'next-multiframe-window)
