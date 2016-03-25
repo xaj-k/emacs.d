@@ -4,11 +4,13 @@
 (setq-default tab-width 4)
 
 ;; Set up indenting in C/C++
-(defconst my-cc-style
+(defvar my-cc-style
   '("linux"
-	(c-offsets-alist . ((innamespace . [0])))))
+	(c-offsets-alist . ((innamespace . [0])
+						(label . c-basic-offset))))
+  "A custom indentation style based on the `linux' style")
 (c-add-style "my-cc-style" my-cc-style)
-(setq c-default-style "my-cc-style")
+(add-to-list 'c-default-style (cons 'other "my-cc-style"))
 
 (setq comint-scroll-to-bottom-on-input t)
 (setq compilation-scroll-output 'first-error)

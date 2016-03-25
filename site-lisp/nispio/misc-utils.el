@@ -4,11 +4,26 @@
   (message (or buffer-file-name "no file"))
   buffer-file-name)
 
+(define-derived-mode pager-mode
+  view-mode "Emacs Pager" "Major mode for paging"
+  (setq buffer-read-only nil)
+  (nispio/ansi-colorize)
+  (set-buffer-modified-p nil)
+  (setq buffer-read-only t))
+
+(defun nispio/ansi-colorize (&optional start end)
+  "Replace in the region ansi-color specifications"
+  (interactive "r")
+  (save-excursion
+	(if (use-region-p)
+		(ansi-color-apply-on-region start end)
+	  (ansi-color-apply-on-region (point-min) (point-max)))))
+
 (defvar emacspipe-regexp "emacspipe[.][A-Za-z0-9]\\{10\\}"
   "Regexp describing the name of temp buffers")
 
 (add-to-list 'auto-mode-alist
-			 (cons emacspipe-regexp 'view-mode))
+			 (cons emacspipe-regexp 'pager-mode))
 
 ;; Helper macro to replace `eval-after-load'
 (defmacro nispio/after (mode &rest body)
@@ -42,7 +57,7 @@
   (interactive "P")
   (message "%s" arg))
 
-(defun nispio/trim-string (arg) 
+(defun nispio/trim-string (arg)
   "Simple function for trimming the whitespace from the ends of
  a string. Also removes any string properties such as font faces."
   (let ((str (substring-no-properties arg)))

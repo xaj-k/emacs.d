@@ -21,15 +21,15 @@
 (global-set-key (kbd "M-1") 'delete-other-windows)
 
 ;; Set load paths for lisp files
-(setq site-lisp "~/.emacs.d/site-lisp")
+(setq site-lisp (concat user-emacs-directory "site-lisp/"))
 (add-to-list 'load-path site-lisp)
 
 ;; Settings modified via the Customize interface get their own file.  We set
 ;; this right up front in case any of the other init functions use the customize
 ;; interface.
 (if (display-graphic-p)
-    (setq custom-file "~/.emacs.d/settings.el")
-  (setq custom-file "~/.emacs.d/settings-tty.el"))
+    (setq custom-file (concat user-emacs-directory "settings.el"))
+  (setq custom-file (concat user-emacs-directory "settings-tty.el")))
 
 (require 'nispio/misc-utils)
 (setq load-path
@@ -42,8 +42,8 @@
        load-path))
 
 ;; Make custom themes available
-(customize-set-value 'custom-theme-directory "~/.emacs.d/site-lisp/themes/")
-(load-file "~/.emacs.d/site-lisp/safe-themes.el")
+(customize-set-value 'custom-theme-directory (concat site-lisp "themes/"))
+(load "safe-themes")
 
 ;; Load my own minor mode for personal keybindings
 (require 'nispio/my-mode)
@@ -110,7 +110,7 @@
   (ido-mode 1)
 
   (setq package-archives '())
-  (add-to-list 'package-archives '("local-misc" . "~/.emacs.d/local-elpa-misc/"))
+  (add-to-list 'package-archives `("local-misc" . ,(concat user-emacs-directory "local-elpa-misc/")))
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   ;; (add-to-list 'package-archives '("local-elpa" . "/datastore/jph/emacs/local-elpa/"))
@@ -366,12 +366,7 @@
       "List of regexps to match against when projectile is searching
 for project root directories.")
 
-    ;; File containing local project roots on this machine
-    (let ((file "~/.emacs.d/local-projects.el"))
-      (when (file-exists-p file)
-        (load-file file)))
-  
-    ;; Add the ability to use projects that are not 
+    ;; Add the ability to use projects that are not
     (eval-after-load 'projectile
       (progn 
         ;; (source: https://github.com/bbatsov/projectile/issues/364#issuecomment-61296248)
@@ -402,8 +397,8 @@ for project root directories.")
     ;; SOURCE: https://github.com/leoliu/ggtags
     (use-package ggtags :ensure t)
 
-    (use-package yasnippet :ensure t)
-    (yas-global-mode 1)
+    ;; (use-package yasnippet :ensure t)
+    ;; (yas-global-mode 1)
 
     ;; Set up auto-complete
     ;; (source: https://github.com/auto-complete/auto-complete)
@@ -486,6 +481,8 @@ for project root directories.")
     (define-key my-map (kbd "C-c M-5") 'vr/replace)
     (define-key my-map (kbd "C-c M-%") 'vr/query-replace)
 
+    (use-package visual-regexp-steroids :ensure t)
+
     ;; View large files one piece at a time
     (use-package vlf-setup :ensure vlf)
 
@@ -529,7 +526,7 @@ for project root directories.")
 ;; Make hide-show mode available, turn it on it a buffer with C-c @
 (autoload 'hs-minor-mode "hideshow")
 (global-set-key (kbd "C-c @") 'hs-minor-mode)
-(defvar nispio/hs-mode-map 
+(defvar nispio/hs-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-2") 'hs-toggle-hiding)
     (define-key map (kbd "C-c") 'hs-toggle-hiding)

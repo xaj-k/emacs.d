@@ -59,5 +59,3 @@
 (define-key my-map (kbd "C-h o") 'describe-face)
 
 (provide 'nispio/my-mode)
-
-
