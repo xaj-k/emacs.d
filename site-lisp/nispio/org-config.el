@@ -139,11 +139,11 @@
 ;; Set a default value for the timer, for example :
 (setq org-timer-default-timer 25)
 
-;; Modify the org-clock-in so that a timer is started with the default
-;; value except if a timer is already started :
-(add-hook 'org-clock-in-hook (lambda ()
-			(if (not org-timer-current-timer) 
-			  (org-timer-set-timer '(16)))))
+;; ;; Modify the org-clock-in so that a timer is started with the default
+;; ;; value except if a timer is already started :
+;; (add-hook 'org-clock-in-hook (lambda ()
+;; 			(if (not org-timer-current-timer)
+;; 			  (org-timer-set-timer '(16)))))
 
 
 (customize-set-variable 'org-link-search-must-match-exact-headline nil)

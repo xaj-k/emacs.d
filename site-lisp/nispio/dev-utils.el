@@ -19,19 +19,43 @@
 
 ;; Set up C-mode specific keybindings
 (defun nispio/c-mode-keys-hook ()
+  (local-set-key (kbd "C-c i") 'nispio/insert-include-guards)
+  (local-set-key (kbd "<C-m>") 'nispio/c-insert-braces)
   (local-set-key (kbd "C-c C-c") 'nispio/compile-c)
   (local-set-key (kbd "<f5>") 'nispio/run-debugger)
   (local-set-key (kbd "<S-f5>") 'nispio/debug-other-frame))
 (add-hook 'c-mode-common-hook 'nispio/c-mode-keys-hook)
 
 ;; Shortcut for opening and closing braces in c-mode
-(defun nispio/insert-braces ()
+(defun nispio/c-insert-braces (&optional start end)
+  (interactive "r")
+  (let ((marker (point-marker))
+        text)
+    (when (use-region-p)
+      (setq text buffer-substring-no-properties start end)
+      (delete-region start end))
+    (insert (mapconcat 'identity `("{" ,text "}") "\n"))
+    (c-indent-region marker (point) 'quiet)
+    (goto-char marker)
+    (forward-line 1)
+    (skip-syntax-forward " " (line-end-position))))
+
+
+;; Insert include guards at the top and bottom of a file
+(defun nispio/insert-include-guards (&optional arg)
   (interactive)
-  (just-one-space)
-  (execute-kbd-macro '[123 return return 125 tab 16 tab]))
-(defun nispio/insert-braces-hook ()
-  (local-set-key (kbd "<C-m>") 'nispio/insert-braces))
-(add-hook 'c-mode-common-hook 'nispio/insert-braces-hook)
+  (let* ((src-file (file-name-nondirectory buffer-file-name))
+		 (file-parts (split-string src-file "[.-]"))
+		 (include-guard (mapconcat 'upcase `("" ,@file-parts "") "_")))
+	(setq include-guard (read-string "Include guard: " include-guard))
+	(save-excursion
+	  (save-restriction
+		(widen)
+		(goto-char (point-min))
+        (insert-before-markers "#ifndef " include-guard
+                               "\n#define " include-guard "\n\n")
+		(goto-char (point-max))
+        (insert "\n#endif // " include-guard "\n")))))
 
 ;; Make C mode use C++-style commenting
 (add-hook 'c-mode-hook (lambda () (setq comment-start "// " comment-end  "")))

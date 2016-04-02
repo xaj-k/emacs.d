@@ -217,6 +217,18 @@ This function is a wrapper around \\[find-dired]."
   (font-lock-add-keywords nil `((,(concat comment-start ".+") . font-lock-comment-face)))
   )
 
+(defun nispio/strip-1 (beg end)
+  "Strip the first and last character from the active region.
+This is intended to be the inverse operation of electric-pair
+insertion."
+  (interactive "r")
+  (when (use-region-p)
+    ;; TODO: It would be nice to ignore leading/trailing whitespace
+    (delete-region (1- end) end)
+    (delete-region beg (1+ beg))))
+
+
+
 
 
 (provide 'nispio/misc-utils)

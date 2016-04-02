@@ -52,6 +52,7 @@
 
 (define-key my-map (kbd "C-H-\\") 'nispio/switch-to-scratch-and-back)
 (define-key my-map (kbd "M-s N") 'nispio/dired-find-exts)
+(define-key my-map (kbd "C-x DEL") 'nispio/strip-1)
 
 (require 'nispio/key-utils)
 (nispio/unbind-digit-arguments)
@@ -70,17 +71,6 @@
 (define-key my-map (kbd "C-c u") 'uncomment-region)
 (define-key my-map (kbd "C-x <f5>") 'revert-buffer)
 (define-key my-map (kbd "C-x <f6>") 'add-file-local-variable)
-
-(require 'nispio/org-config)
-(define-key my-map (kbd "C-c a") 'org-agenda)
-(define-key my-map (kbd "C-c l") 'org-store-link)
-(define-key my-map (kbd "C-'") 'org-capture)
-(define-key my-map (kbd "C-c C-x C-i") 'org-clock-in)
-(define-key my-map (kbd "C-c C-x <C-i>") 'org-clock-in)
-(define-key my-map (kbd "C-c C-x C-o") 'org-clock-out)
-(define-key my-map (kbd "C-c C-x C-x") 'org-clock-in-last)
-(define-key my-map (kbd "C-c C-x C-e") 'org-clock-modify-effort-estimate)
-(define-key my-map (kbd "C-c C-x <C-m>") 'org-clock-menu)
 
 ;; Basic editor configuration
 (setq-default truncate-lines t)        ; Truncate lines by default
@@ -113,6 +103,7 @@
   (add-to-list 'package-archives `("local-misc" . ,(concat user-emacs-directory "local-elpa-misc/")))
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
   ;; (add-to-list 'package-archives '("local-elpa" . "/datastore/jph/emacs/local-elpa/"))
   (require 'nispio/package-config)
 
@@ -127,21 +118,15 @@
 
   (defun backward-symbol () (interactive) (forward-symbol -1))
 
-  (defun my-prog-mode-keys ()
-    (local-set-key (kbd "M-f") 'forward-symbol)
-    (local-set-key (kbd "M-b") 'backward-symbol)
-    (local-set-key (kbd "M-F") 'forward-word)
-    (local-set-key (kbd "M-B") 'backward-word))
-  (add-hook 'prog-mode-hook 'my-prog-mode-keys)
+  ;; (defun my-prog-mode-keys ()
+  ;;   (local-set-key (kbd "M-f") 'forward-symbol)
+  ;;   (local-set-key (kbd "M-b") 'backward-symbol)
+  ;;   (local-set-key (kbd "M-F") 'forward-word)
+  ;;   (local-set-key (kbd "M-B") 'backward-word))
+  ;; (add-hook 'prog-mode-hook 'my-prog-mode-keys)
 
-  ;; In Org Mode, use <C-m> as <M-return>
-  (defun nispio/fake-M-RET ()
-    (interactive)
-    (let ((command (key-binding (kbd "<M-return>"))))
-      (setq last-command-event [M-return])
-      (setq this-command command)
-      (call-interactively command)))
-  (add-hook 'org-mode-hook (lambda () (local-set-key (kbd "<C-m>") 'nispio/fake-M-RET)))
+  ;; Install updated org-mode from ELPA
+  (use-package org :ensure t)
 
   ;; Use unix line endings by default
   (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -502,15 +487,38 @@ for project root directories.")
 
 
 
-;; isearch automatically wraps upon failure
-;; (source: http://stackoverflow.com/q/285660/1590790)
-(defadvice isearch-search (after isearch-no-fail activate)
-  (unless isearch-success
-    (ad-disable-advice 'isearch-search 'after 'isearch-no-fail)
-    (ad-activate 'isearch-search)
-    (isearch-repeat (if isearch-forward 'forward))
-    (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
-    (ad-activate 'isearch-search)))
+;; Set up org mode.  This is postponed to make sure that we are working with the
+;; latest version of org instead of the version included with emacs
+(require 'nispio/org-config)
+(define-key my-map (kbd "C-c a") 'org-agenda)
+(define-key my-map (kbd "C-c l") 'org-store-link)
+(define-key my-map (kbd "C-'") 'org-capture)
+(define-key my-map (kbd "C-c C-x C-i") 'org-clock-in)
+(define-key my-map (kbd "C-c C-x <C-i>") 'org-clock-in)
+(define-key my-map (kbd "C-c C-x C-o") 'org-clock-out)
+(define-key my-map (kbd "C-c C-x C-x") 'org-clock-in-last)
+(define-key my-map (kbd "C-c C-x C-e") 'org-clock-modify-effort-estimate)
+(define-key my-map (kbd "C-c C-x <C-m>") 'org-clock-menu)
+
+;; In Org Mode, use <C-m> as <M-return>
+(defun nispio/fake-M-RET ()
+  (interactive)
+  (let ((command (key-binding (kbd "<M-return>"))))
+    (setq last-command-event [M-return])
+    (setq this-command command)
+    (call-interactively command)))
+(add-hook 'org-mode-hook (lambda () (local-set-key (kbd "<C-m>") 'nispio/fake-M-RET)))
+
+
+;; ;; isearch automatically wraps upon failure
+;; ;; (source: http://stackoverflow.com/q/285660/1590790)
+;; (defadvice isearch-search (after isearch-no-fail activate)
+;;   (unless isearch-success
+;;     (ad-disable-advice 'isearch-search 'after 'isearch-no-fail)
+;;     (ad-activate 'isearch-search)
+;;     (isearch-repeat (if isearch-forward 'forward))
+;;     (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
+;;     (ad-activate 'isearch-search)))
 
 ;; Set the default faces for highlighting with hi-lock
 (setq hi-lock-face-defaults (list "hi-yellow" "hi-pink" "hi-green" "hi-blue"))
