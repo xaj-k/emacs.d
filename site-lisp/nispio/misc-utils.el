@@ -208,7 +208,15 @@ This function is a wrapper around \\[find-dired]."
 	(dired-do-find-marked-files 0)
 	(quit-window)
 	(setq buf (and file (get-file-buffer file)))
-	(and buf (show-buffer nil buf))))
+    (and buf (show-buffer nil buf))))
+
+;; Copy to the clipboard the full path to the marked file
+(defun nispio/dired-copy-filename ()
+  "Copy full path of marked file onto the clipboard."
+  (interactive)
+  (let ((filename (dired-copy-filename-as-kill 0)))
+    (x-own-selection-internal 'PRIMARY filename)))
+
 
 ;; SOURCE: http://emacs.stackexchange.com/a/16854/93
 (defun nispio/set-comment-char (char)

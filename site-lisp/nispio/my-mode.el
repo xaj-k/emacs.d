@@ -19,12 +19,14 @@
   "Command to enable my-global-mode"
   (interactive)
   (my-global-mode 1)
+  (setq-default my-mode 1)
   (message "my-global-mode enabled"))
 
 (defun disable-my-global-mode ()
   "Command to disable my-global-mode"
   (interactive)
   (my-global-mode -1)
+  (setq-default my-mode nil)
   (message "my-global-mode disabled"))
 
 (defun nispio/fake-M-RET ()

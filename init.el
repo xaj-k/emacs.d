@@ -141,7 +141,8 @@
   (require 'dired-x)
   ;; Start search in dired buffer with "/"
   (define-key dired-mode-map (kbd "/") 'dired-isearch-filenames)
-  (define-key dired-mode-map "F" 'nispio/find-marked-files)
+  (define-key dired-mode-map (kbd "F") 'nispio/find-marked-files)
+  (define-key dired-mode-map (kbd "W") 'nispio/dired-copy-filename)
 
   ;; ;; Extend dired functionality
   (use-package dired+ :ensure t)
@@ -491,7 +492,7 @@ for project root directories.")
     (use-package vlf-setup :ensure vlf)
 
     ;; Automatic unobtrusive whitespace cleanup on save
-    (use-package ws-butler :ensure t)
+    (use-package ws-butler :ensure t :diminish "")
     (ws-butler-global-mode)
 
     ;; Use ido for completing-read
