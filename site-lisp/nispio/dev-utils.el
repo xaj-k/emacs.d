@@ -1,7 +1,7 @@
 (require 'nispio/misc-utils)
 
-(setq-default c-basic-offset 4)
 (setq-default tab-width 4)
+(setq-default c-basic-offset 4)
 
 ;; Set up indenting in C/C++
 (defvar my-cc-style
@@ -19,11 +19,11 @@
 
 ;; Set up C-mode specific keybindings
 (defun nispio/c-mode-keys-hook ()
+  (local-set-key (kbd "M-.") 'helm-gtags-dwim)
+  (local-set-key (kbd "<M-return>") 'nispio/c-insert-braces)
   (local-set-key (kbd "C-c i") 'nispio/insert-include-guards)
-  (local-set-key (kbd "<C-m>") 'nispio/c-insert-braces)
   (local-set-key (kbd "C-c C-c") 'nispio/compile-c)
-  (local-set-key (kbd "<f5>") 'nispio/run-debugger)
-  (local-set-key (kbd "<S-f5>") 'nispio/debug-other-frame))
+  (local-set-key (kbd "<S-f5>") 'nispio/run-debugger))
 (add-hook 'c-mode-common-hook 'nispio/c-mode-keys-hook)
 
 ;; Shortcut for opening and closing braces in c-mode
@@ -38,7 +38,7 @@
     (c-indent-region marker (point) 'quiet)
     (goto-char marker)
     (forward-line 1)
-    (skip-syntax-forward " " (line-end-position))))
+    (c-indent-line)))
 
 
 ;; Insert include guards at the top and bottom of a file
@@ -314,18 +314,18 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; work from the source window too...
 (let ((map nispio/gdb-window-map))
   (mapcar (lambda (el)
-			(lexical-let ((key    (car el))
-						  (header (cdr el)))
-			  (define-key map (kbd key) #'(lambda ()
-											(interactive)
-											(gdb-select-window header)))))
-		  '(("c" . comint)
-			("l" . locals)
-			("r" . registers)
-			("u" . source)
-			("s" . stack)
-			("b" . breakpoints)
-			("t" . threads))))
+            (let ((key    (car el))
+                  (header (cdr el)))
+              (define-key map (read-kbd-macro key) #'(lambda ()
+                                                       (interactive)
+                                                       (gdb-select-window header)))))
+          '(("c" . comint)
+            ("l" . locals)
+            ("r" . registers)
+            ("u" . source)
+            ("s" . stack)
+            ("b" . breakpoints)
+            ("t" . threads))))
 
 
 
@@ -341,6 +341,10 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (defun my-semantic-hook ()
   (imenu-add-to-menubar "TAGS"))
 (add-hook 'semantic-init-hooks 'my-semantic-hook)
+
+(defun disable-semantic-idle-summary-mode ()
+  (semantic-idle-summary-mode 0))
+(add-hook 'semantic-mode-hook 'disable-semantic-idle-summary-mode)
 
 (semantic-add-system-include
  (substitute-in-file-name "$XMDISK/xm/inc")
@@ -424,6 +428,8 @@ Recognized window header names are: 'comint, 'locals, 'registers,
   (add-to-list 'flymake-allowed-file-name-masks
                '("\\.py\\'" nispio/flymake-python-init)))
 
+(add-hook 'python-mode-hook 'flymake-mode-on)
+
 (defun nispio/set-python-keys ()
   (local-set-key [remap fill-paragraph] 'python-fill-paragraph))
 (add-hook 'python-mode-hook 'nispio/set-python-keys)
@@ -458,12 +464,11 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; ;; Disable the window that 'pops' when flymake can't be enabled.
 (setq flymake-gui-warnings-enabled nil)
 
-;; Activate flymake by default
-(add-hook 'find-file-hook 'flymake-mode-on)
+;; ;; Activate flymake by default
+;; (add-hook 'find-file-hook 'flymake-mode-on)
 
 ;; Do logging of errors for flymake
 (setq flymake-log-level 0)
-
 
 
 

@@ -43,16 +43,11 @@
 
 ;; Make custom themes available
 (customize-set-value 'custom-theme-directory (concat site-lisp "themes/"))
-(load "safe-themes")
 
 ;; Load my own minor mode for personal keybindings
 (require 'nispio/my-mode)
 (enable-my-global-mode)
-(global-set-key (kbd "C-M-&") 'enable-my-global-mode)
-
-(define-key my-map (kbd "C-H-\\") 'nispio/switch-to-scratch-and-back)
-(define-key my-map (kbd "M-s N") 'nispio/dired-find-exts)
-(define-key my-map (kbd "C-x DEL") 'nispio/strip-1)
+(global-set-key (kbd "<pause>") 'enable-my-global-mode)
 
 (require 'nispio/key-utils)
 (nispio/unbind-digit-arguments)
@@ -69,8 +64,19 @@
 
 (define-key my-map (kbd "C-c c") 'comment-region)
 (define-key my-map (kbd "C-c u") 'uncomment-region)
-(define-key my-map (kbd "C-x <f5>") 'revert-buffer)
+(define-key my-map (kbd "<f5>") 'nispio/revert-buffer)
+(define-key my-map (kbd "C-x <f5>") 'nispio/remove-properties)
 (define-key my-map (kbd "C-x <f6>") 'add-file-local-variable)
+
+(define-key my-map (kbd "C-H-\\") 'nispio/switch-to-scratch-and-back)
+(define-key my-map (kbd "M-s N") 'nispio/dired-find-exts)
+(define-key my-map (kbd "M-s O") 'multi-occur-in-matching-buffers)
+(define-key my-map (kbd "M-s .") 'isearch-forward-symbol-at-point)
+(define-key my-map (kbd "C-x DEL") 'nispio/strip-1)
+(define-key my-map (kbd "<S-prior>") 'nispio/scroll-down-lines)
+(define-key my-map (kbd "<S-next>") 'nispio/scroll-up-lines)
+(define-key my-map (kbd "C-x K") 'nispio/delete-this-file)
+
 
 ;; Basic editor configuration
 (setq-default truncate-lines t)        ; Truncate lines by default
@@ -81,6 +87,7 @@
 (setq scroll-step 1)                   ; Only scroll by one line at top/bottom
 (setq require-final-newline t)         ; Always end a file with a newline
 (setq frame-title-format "emacs - %b") ; Set frame title to "emacs - <buffer name>"
+(setq-default fill-column 80)          ; Set the default fill-column to 80
 
 ;; Set tab width to 4 and put tab stops every 4 characters
 (setq-default tab-width 4)
@@ -100,7 +107,7 @@
   (ido-mode 1)
 
   (setq package-archives '())
-  (add-to-list 'package-archives `("local-misc" . ,(concat user-emacs-directory "local-elpa-misc/")))
+  (add-to-list 'package-archives (cons "local-misc" (concat user-emacs-directory "local-elpa-misc/")))
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
@@ -139,9 +146,10 @@
   ;; ;; Extend dired functionality
   (use-package dired+ :ensure t)
 
-  ;; When opening a directory in dired, reuse the current buffer
-  (diredp-toggle-find-file-reuse-dir 1)
-  (customize-set-variable 'diredp-hide-details-initially-flag nil)
+  (nispio/after 'dired+
+    ;; When opening a directory in dired, reuse the current buffer
+    (diredp-toggle-find-file-reuse-dir 1)
+    (customize-set-variable 'diredp-hide-details-initially-flag nil))
 
   ;; Make ibuffer auto-update after changes
   ;; (source: http://emacs.stackexchange.com/a/2179/93)
@@ -153,6 +161,11 @@
     (setq-local auto-revert-verbose nil)
     (auto-revert-mode 1))
   (add-hook 'ibuffer-mode-hook 'nispio/ibuffer-auto-revert-setup)
+
+  ;; Move current line up and down with M-up and M-down
+  (use-package move-text :ensure t)
+  (define-key my-map (kbd "<M-up>") 'move-text-up)
+  (define-key my-map (kbd "<M-down>") 'move-text-down)
 
   ;; Easily re-arrange buffers within the frame
   ;; (source: http://www.emacswiki.org/emacs/download/buffer-move.el)
@@ -187,8 +200,8 @@
   ;; (source: https://github.com/zk-phi/phi-search)
   (use-package phi-search :ensure t)
   (customize-set-value 'phi-search-case-sensitive 'guess)
-  (define-key my-map (kbd "H-C-s") 'phi-search)
-  (define-key my-map (kbd "H-C-r") 'phi-search-backward)
+  (define-key my-map (kbd "C-s") 'phi-search)
+  (define-key my-map (kbd "C-r") 'phi-search-backward)
 
   ;; Complete phi-search with the match selected
   (defun phi-search-complete-with-selection ()
@@ -207,11 +220,11 @@
   ;; Add support for editing with multiple cursors
   ;; (source: https://github.com/magnars/multiple-cursors.el)
   (use-package multiple-cursors :ensure t)
-  (defun nispio/fake-cursor-at-point ()
-    (interactive)
-    (mc/create-fake-cursor-at-point))
 
-  (define-key mc/keymap (kbd "M-x") 'execute-extended-command)
+  (nispio/after 'multiple-cursors
+    (define-key mc/keymap (kbd "M-x") 'execute-extended-command)
+    (define-key mc/keymap (kbd "C-!") 'nispio/mc-insert-numbers-1)
+    (define-key mc/keymap (kbd "C-1") 'mc/insert-numbers))
 
   (define-key my-map (kbd "C->") 'mc/mark-next-like-this)
   (define-key my-map (kbd "C-<") 'mc/mark-previous-like-this)
@@ -221,6 +234,9 @@
   (define-key my-map (kbd "C-S-c C-<") 'mc/mark-all-in-region)
   (define-key my-map (kbd "H-C-SPC") 'nispio/fake-cursor-at-point)
   (define-key my-map (kbd "<H-return>") 'multiple-cursors-mode)
+  (define-key my-map (kbd "<H-C-return>") 'nispio/mc-many-cursors)
+  (define-key my-map (kbd "<C-down-mouse-1>") 'mc/toggle-cursor-on-click)
+  (define-key my-map (kbd "<C-mouse-1>") 'ignore)
 
   ;; TODO: find a better way to set these bindings in special cases
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -232,12 +248,9 @@
   
   ;; Add extended interoperability between phi-search and multiple cursors
   ;; (source: https://github.com/knu/phi-search-mc.el)
-  (eval-after-load "phi-search"
-    (progn
-      (use-package phi-search-mc :ensure t)
-      (phi-search-mc/setup-keys)
-      (phi-search-from-isearch-mc/setup-keys)
-      nil))
+  (use-package phi-search-mc :ensure t)
+  (phi-search-mc/setup-keys)
+  (phi-search-from-isearch-mc/setup-keys)
 
   ;; Use phi-rectangle for rectangular selections
   (use-package phi-rectangle :ensure t)
@@ -259,35 +272,37 @@
   ;; Enable column markers at column 81 to warn of long lines
   ;; (source: http://www.emacswiki.org/emacs/download/column-marker.el)
   (use-package column-marker :ensure t)
-  (defun nispio/column-marker-at-91 ()
+  (defvar-local nispio/column-marker-column 91
+    "The column that should be highlighted as a long-line warning.")
+  (defun nispio/column-marker (&optional col)
+    "Place column-marker-1 at the column specified by `nispio/column-marker-column'"
     (interactive)
-    (column-marker-1 91))
-  (add-hook 'prog-mode-hook 'nispio/column-marker-at-91)
-  (setq-default fill-column 80)
-
+    (column-marker-1 (or col nispio/column-marker-column)))
+  (add-hook 'prog-mode-hook 'nispio/column-marker)
 
   (use-package tex-site :ensure auctex)
-  (setq
-   TeX-auto-save t
-   TeX-parse-self t
-   TeX-source-correlate-method (quote synctex)
-   TeX-source-correlate-mode t
-   TeX-source-correlate-start-server t
-   reftex-plug-into-AUCTeX t)
-  ;; (setq
-  ;;  TeX-view-program-list (quote (("Sumatra PDF" "/usr/local/bin/sumatra -reuse-instance %o")))
-  ;;  TeX-view-program-selection (quote ((output-pdf "Sumatra PDF"))))
-  (setq-default TeX-master nil)
-  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (nispio/after 'tex-site
+    (setq
+     TeX-auto-save t
+     TeX-parse-self t
+     TeX-source-correlate-method (quote synctex)
+     TeX-source-correlate-mode t
+     TeX-source-correlate-start-server t
+     reftex-plug-into-AUCTeX t)
+    ;; (setq
+    ;;  TeX-view-program-list (quote (("Sumatra PDF" "/usr/local/bin/sumatra -reuse-instance %o")))
+    ;;  TeX-view-program-selection (quote ((output-pdf "Sumatra PDF"))))
+    (setq-default TeX-master nil)
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
 
-  ;; SrSpeedbar allows a speedbar that is "docked" in the current frame
-  (use-package sr-speedbar :ensure t)
-  (define-key my-map (kbd "C-c M-SPC") 'sr-speedbar-toggle)
-  ;(define-key nispio/gdb-window-map (kbd "w") 'sr-speedbar-select-window)
+  ;; ;; SrSpeedbar allows a speedbar that is "docked" in the current frame
+  ;; (use-package sr-speedbar :ensure t)
+  ;; (define-key my-map (kbd "C-c M-SPC") 'sr-speedbar-toggle)
+  ;; ;(define-key nispio/gdb-window-map (kbd "w") 'sr-speedbar-select-window)
 
   ;; Display ^L as a horizontal line
   (use-package page-break-lines :ensure t :diminish "")
@@ -377,6 +392,10 @@ for project root directories.")
         (define-key my-map (kbd "C-7") projectile-command-map)
         (define-key projectile-command-map (kbd "\\") 'projectile-find-other-file)
         nil))
+
+    (use-package helm-gtags :ensure t)
+    (add-hook 'c-mode-common-hook 'helm-gtags-mode)
+    (define-key my-map (kbd "M-.") 'helm-gtags-dwim)
     
     ;; Emacs frontend to GNU Global source code tagging system.
     ;; SOURCE: https://github.com/leoliu/ggtags
@@ -457,16 +476,16 @@ for project root directories.")
     (customize-set-value 'elscreen-tab-display-control nil)
     (customize-set-value 'elscreen-tab-display-kill-screen nil)
     (elscreen-start)
-    (define-key my-map (kbd "C-z z") 'elscreen-toggle-display-tab)
+    (define-key my-map (kbd "C-z z") 'suspend-frame)
+    (define-key my-map (kbd "C-z f") 'elscreen-toggle-display-tab)
+    (define-key my-map (kbd "C-z F") 'elscreen-toggle-display-tab)
     (define-key my-map (kbd "C-z C-z") 'elscreen-toggle)
 
     ;; Commands for working with regexps with visual feedback
     (use-package visual-regexp :ensure t)
-    ;(use-package visual-regexp-steroids :ensure t)
-    (define-key my-map (kbd "C-c M-5") 'vr/replace)
-    (define-key my-map (kbd "C-c M-%") 'vr/query-replace)
-
     (use-package visual-regexp-steroids :ensure t)
+    (define-key my-map (kbd "M-5") 'vr/replace)
+    (define-key my-map (kbd "M-%") 'vr/query-replace)
 
     ;; View large files one piece at a time
     (use-package vlf-setup :ensure vlf)
@@ -499,16 +518,6 @@ for project root directories.")
 (define-key my-map (kbd "C-c C-x C-x") 'org-clock-in-last)
 (define-key my-map (kbd "C-c C-x C-e") 'org-clock-modify-effort-estimate)
 (define-key my-map (kbd "C-c C-x <C-m>") 'org-clock-menu)
-
-;; In Org Mode, use <C-m> as <M-return>
-(defun nispio/fake-M-RET ()
-  (interactive)
-  (let ((command (key-binding (kbd "<M-return>"))))
-    (setq last-command-event [M-return])
-    (setq this-command command)
-    (call-interactively command)))
-(add-hook 'org-mode-hook (lambda () (local-set-key (kbd "<C-m>") 'nispio/fake-M-RET)))
-
 
 ;; ;; isearch automatically wraps upon failure
 ;; ;; (source: http://stackoverflow.com/q/285660/1590790)
@@ -571,6 +580,9 @@ for project root directories.")
 ;; Enable disabled commands
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)
 
 (setq no-server-start-p (member "--no-server" command-line-args))
 (setq command-line-args (delete "--no-server" command-line-args))

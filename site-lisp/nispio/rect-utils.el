@@ -31,6 +31,37 @@
   (nispio/push-killed-rectangle-to-kill-ring)
   (yank arg))
 
+(defun nispio/fake-cursor-at-point ()
+  "Create a fake cursor at point.  Multiple-cursors mode must be
+activated before the fake cursor becomes active."
+  (interactive)
+  (mc/create-fake-cursor-at-point))
+
+(defun nispio/mc-many-cursors (&optional arg)
+  "Insert a number of fake cursors equal to length of the last
+  killed rectangle.  If ARG is non-nil, insert N-1 fake cursors.
+  In both cases, `multiple-cursors-mode' is activated."
+  (interactive "*P")
+  (let ((N (1- (or (and arg (prefix-numeric-value arg))
+                   (and killed-rectangle (length killed-rectangle))
+                   1))))
+    (when (and (not arg) killed-rectangle)
+      (setq phi-rectangle--last-killed-is-rectangle t))
+    (insert (make-string N 32))
+    (backward-char N)
+    (dotimes (n N)
+      (mc/create-fake-cursor-at-point)
+      (forward-char))
+    (mc/maybe-multiple-cursors-mode)))
+
+(defun nispio/mc-insert-numbers-1 (&optional arg)
+  "Insert increasing numbers for each cursor, starting at 1 or ARG."
+  (interactive "*P")
+  (setq this-command 'mc/insert-numbers)
+  (setq mc--this-command 'mc/insert-numbers)
+  (setq current-prefix-arg (or arg 1))
+  (call-interactively 'mc/insert-numbers))
+
 ;; (defun nispio/region-to-phi-rectangle (start end &optional fill)
 ;;   (interactive "r\nP")
 ;;   (unless (fboundp 'phi-rectangle-set-mark-command)

@@ -4,6 +4,7 @@
   (message (or buffer-file-name "no file"))
   buffer-file-name)
 
+;; Pager mode for viewing piped data
 (define-derived-mode pager-mode
   view-mode "Emacs Pager" "Major mode for paging"
   (setq buffer-read-only nil)
@@ -11,6 +12,7 @@
   (set-buffer-modified-p nil)
   (setq buffer-read-only t))
 
+;; Function to set font colors based on ansi color escape sequences
 (defun nispio/ansi-colorize (&optional start end)
   "Replace in the region ansi-color specifications"
   (interactive "r")
@@ -19,11 +21,10 @@
 		(ansi-color-apply-on-region start end)
 	  (ansi-color-apply-on-region (point-min) (point-max)))))
 
+;; Automatically open emacspipe file in pager-mode
 (defvar emacspipe-regexp "emacspipe[.][A-Za-z0-9]\\{10\\}"
-  "Regexp describing the name of temp buffers")
-
-(add-to-list 'auto-mode-alist
-			 (cons emacspipe-regexp 'pager-mode))
+  "Regexp describing the name of temporary files used for paging")
+(add-to-list 'auto-mode-alist (cons emacspipe-regexp 'pager-mode))
 
 ;; Helper macro to replace `eval-after-load'
 (defmacro nispio/after (mode &rest body)
@@ -224,9 +225,68 @@ insertion."
   (interactive "r")
   (when (use-region-p)
     ;; TODO: It would be nice to ignore leading/trailing whitespace
-    (delete-region (1- end) end)
-    (delete-region beg (1+ beg))))
+    (let ((deactivate-mark nil))
+      (delete-region (1- end) end)
+      (delete-region beg (1+ beg)))))
 
+
+(defun nispio/revert-buffer (&optional preserve-modes)
+  "A wrapper around `revert-buffer' which only prompts for
+confirmation if the buffer has been modified.  Also strips text
+properties from the buffer before reverting.
+
+Optional third argument PRESERVE-MODES non-nil means don't alter
+the files modes.  Normally we reinitialize them using
+`normal-mode'.  Setting PRESERVE-MODES to be non-nil will also
+prevent removing of text properties."
+  (interactive "P")
+  (unless preserve-modes (nispio/remove-properties))
+  (revert-buffer t (not (buffer-modified-p)) preserve-modes))
+
+
+(defun nispio/remove-properties (&optional start end)
+  "Removes all text properties from the region.  If no region is
+selected, removes all text properties from the buffer."
+  (interactive (list
+                (and (use-region-p) (region-beginning))
+                (and (use-region-p) ( region-end))))
+  (save-restriction
+    (widen)
+    (let ((start (or start (point-min)))
+          (end (or end (point-max)))
+          (modified (buffer-modified-p)))
+      (set-text-properties start end nil)
+      (set-buffer-modified-p modified))))
+
+
+(defvar nispio/scroll-lines-amount 5
+  "The amount to be scrolled by `nispio/scroll-[up|down]-lines'.")
+
+(defun nispio/scroll-down-lines (&optional arg)
+  "Scroll text of selected window down ARG lines.  If ARG is omitted or
+ nil, scroll down by the value of `nispio/scroll-lines-amount'."
+  (interactive "P")
+  (setq arg (and arg (prefix-numeric-value arg)))
+  (scroll-down-line (or arg nispio/scroll-lines-amount)))
+
+(defun nispio/scroll-up-lines (&optional arg)
+  "Scroll text of selected window up ARG lines.  If ARG is omitted or
+ nil, scroll up by the value of `nispio/scroll-lines-amount'."
+  (interactive "P")
+  (setq arg (and arg (prefix-numeric-value arg)))
+  (scroll-up-line (or arg nispio/scroll-lines-amount)))
+
+
+(defun nispio/delete-this-file ()
+  (interactive)
+  (if (and buffer-file-name (file-exists-p buffer-file-name))
+      (if (yes-or-no-p (format "Permanently delete file '%s'? " buffer-file-name))
+          (progn
+            (delete-file buffer-file-name)
+            (kill-buffer))
+        (if (y-or-n-p (format "Kill buffer '%s'? " (buffer-name (current-buffer))))
+            (kill-buffer)))
+    (kill-buffer)))
 
 
 

@@ -59,9 +59,9 @@
  ;; If there is more than one, they won't work right.
  '(Buffer-menu-name-width 50)
  '(column-number-mode t)
- '(custom-safe-themes
-   (quote
-	("7db66dafe7a65a8a6a403014edb5e53deca2da82279cb8f3f55e4bc336bf48af" default)))
+ ;; '(custom-safe-themes
+ ;;   (quote
+ ;;    ("7db66dafe7a65a8a6a403014edb5e53deca2da82279cb8f3f55e4bc336bf48af" default)))
  '(font-lock-maximum-decoration (quote ((t . t) (dired-mode . 2))))
  '(ibuffer-elide-long-columns t)
  '(ibuffer-formats

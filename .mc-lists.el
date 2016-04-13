@@ -114,13 +114,16 @@
         ido-find-file
         ido-switch-buffer
         ido-switch-buffer-other-window
+        ignore
         isearch-printing-char
         make-default
+        mc/toggle-cursor-on-click
         mouse-save-then-kill
         mouse-set-region
         multiple-cursors-mode
         next-multiframe-window
         nispio/compile-c
+        nispio/mc-many-cursors
         nispio/other-window
         org-agenda
         org-ctrl-c-ctrl-c
