@@ -35,7 +35,8 @@
 		 (whitelist (nispio/read-contents whitelist-file))
 		 my-archive name added full-name readme-name)
 	(setq repository-list (or repository-list
-							  '("http://melpa.org/packages/"
+                              '("http://orgmode.org/elpa/"
+                                "http://melpa.org/packages/"
 								"http://elpa.gnu.org/packages/"
 								"file:///home/jph/.emacs.d/local-elpa-misc/")))
 	(dolist (url repository-list)
