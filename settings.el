@@ -43,15 +43,19 @@
  '(indent-tabs-mode nil)
  '(mc/mode-line
    (quote
-    (" mc:" :eval (format #("%d" 0 2 (face mc/cursor-face)) (mc/num-cursors)))))
+    (" mc:" :eval
+     (format
+      #("%d" 0 2
+        (face mc/cursor-face))
+      (mc/num-cursors)))))
  '(mouse-autoselect-window t)
  '(org-agenda-files "~/.org/agendas.ini")
- '(org-agenda-ndays 10)
- '(org-agenda-restore-windows-after-quit t)
- '(org-agenda-skip-deadline-if-done nil)
- '(org-agenda-skip-scheduled-if-done nil)
- '(org-agenda-start-on-weekday nil)
- '(org-agenda-todo-ignore-scheduled t)
+ '(org-agenda-ndays 10 t)
+ '(org-agenda-restore-windows-after-quit t t)
+ '(org-agenda-skip-deadline-if-done nil t)
+ '(org-agenda-skip-scheduled-if-done nil t)
+ '(org-agenda-start-on-weekday nil t)
+ '(org-agenda-todo-ignore-scheduled t t)
  '(org-blank-before-new-entry (quote ((heading . t) (plain-list-item))))
  '(org-capture-templates
    (quote
@@ -87,7 +91,7 @@
       "* %?")
      ("J" "Journal (free writing)" entry
       (file+datetree "~/.org/freejourn.org")
-      "* %?"))))
+      "* %?"))) t)
  '(org-completion-use-ido t)
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
@@ -139,7 +143,8 @@
      (320 . "goldenrod")
      (340 . "#e7c547")
      (360 . "DarkOliveGreen3"))))
- '(vc-annotate-very-old-color nil))
+ '(vc-annotate-very-old-color nil)
+ '(vr/engine (quote python)))
 (put 'dired-find-alternate-file 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

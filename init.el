@@ -76,7 +76,7 @@
 (define-key my-map (kbd "<S-prior>") 'nispio/scroll-down-lines)
 (define-key my-map (kbd "<S-next>") 'nispio/scroll-up-lines)
 (define-key my-map (kbd "C-x K") 'nispio/delete-this-file)
-
+(define-key my-map (kbd "C-5") 'my-align-regexp)
 
 ;; Basic editor configuration
 (setq-default truncate-lines t)        ; Truncate lines by default
@@ -92,6 +92,10 @@
 ;; Set tab width to 4 and put tab stops every 4 characters
 (setq-default tab-width 4)
 (setq tab-stop-list (number-sequence 4 100 4))
+
+(defun elisp-set-tab-width ()
+  (setq tab-width 8))
+(add-hook 'emacs-lisp-mode-hook 'elisp-set-tab-width)
 
 ;; Workaround for an issue with isearch
 (define-key isearch-mode-map (kbd "<return>") 'isearch-exit)
@@ -238,6 +242,7 @@
   (define-key my-map (kbd "<H-C-return>") 'nispio/mc-many-cursors)
   (define-key my-map (kbd "<C-down-mouse-1>") 'mc/toggle-cursor-on-click)
   (define-key my-map (kbd "<C-mouse-1>") 'ignore)
+  (define-key my-map (kbd "M-s M-s") 'mc--mark-symbol-at-point)
 
   ;; TODO: find a better way to set these bindings in special cases
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -350,6 +355,7 @@
       (define-key map (kbd "H-M-s B") 'helm-multi-swoop-all-from-isearch))
 
     (use-package helm-ag :ensure t)
+    (require 'nispio/helm-ag)
     (define-key my-map (kbd "M-s A") 'helm-do-ag)
     (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
 

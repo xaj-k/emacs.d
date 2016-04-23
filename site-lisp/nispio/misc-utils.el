@@ -296,6 +296,49 @@ selected, removes all text properties from the buffer."
             (kill-buffer)))
     (kill-buffer)))
 
+(defun nispio/align-regexp ()
+  "Wrapper around align-regexp which works around issues that
+can occur when newlines are included in the whitespace syntax
+class. [bug #23339]"
+  (interactive)
+  (setq this-command 'align-regexp)
+  (if (eq ?\s (char-syntax ?\n))
+      (let ((table (copy-syntax-table (syntax-table))))
+        (modify-syntax-entry ?\n ">" table)
+        (with-syntax-table table
+          (call-interactively 'align-regexp)))
+    (call-interactively 'align-regexp)))
+
+
+(defun nispio/cons-to-list (cons)
+  "Modifies CONS to turn it into a list."
+  (when (consp cons)
+    (setcdr (last cons) (cons (cdr (last cons)) nil)))
+  (and (listp cons) cons))
+
+(defun nispio/list-to-cons (list)
+  "Modifies LIST to turn it into a nested cons."
+  (when (< 1 (safe-length list))
+    (setcdr (last list 2) (car (last list))))
+  (and (consp list) list))
+
+(defsubst nispio/true-listp (list)
+  "Checks whether a list is actually nil-terminated"
+  (and (listp list) (null (cdr-safe (last list)))))
+
+(defsubst nispio/true-consp (cons)
+  "Checks for a nested cons cell whose last element does not link
+to nil."
+  (and (< 1 (safe-length cons)) (cdr-safe (last list))))
+
+(defun nispio/rotate-list (list N)
+  (let* ((consp (nispio/true-consp list))
+         (x (if consp (nispio/cons-to-list list) list))
+         (size (length x))
+         (n (mod N size)))
+    (setq x (append (last x n) (butlast x n)))
+    (if consp (nispio/list-to-cons x) x)))
+
 
 
 
