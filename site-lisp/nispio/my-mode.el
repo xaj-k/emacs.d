@@ -48,6 +48,7 @@
   (define-key local-function-key-map [C-\[] [?\C-\[])
   (setq tty-keys nil))
 
+;; Turn C-] into a sticky "hyper" modifier
 (define-key local-function-key-map [?\C-\]] 'event-apply-hyper-modifier)
 (define-key global-map [?\C-\]] nil)
 

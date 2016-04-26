@@ -330,6 +330,9 @@
     (electric-pair-mode 1) ; Enable automatic bracket closing
 
     (require 'nispio/helm-config)
+    (require 'nispio/helm-command-extra)
+    (nispio/setup-helm-apropos)
+
     (define-key my-map (kbd "C-8") helm-command-map)
     (define-key helm-command-map (kbd "C-SPC") 'helm-resume)
     (define-key helm-map (kbd "M-1") 'nispio/helm-full-frame)
@@ -355,9 +358,11 @@
       (define-key map (kbd "H-M-s B") 'helm-multi-swoop-all-from-isearch))
 
     (use-package helm-ag :ensure t)
-    (require 'nispio/helm-ag)
     (define-key my-map (kbd "M-s A") 'helm-do-ag)
     (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
+
+    (require 'nispio/helm-ag-extra)
+    (nispio/setup-helm-ag-narrow)
 
     ;; Use a more powerful alternative to ido-mode's flex matching.
     ;; SOURCE: https://github.com/lewang/flx.git
@@ -504,9 +509,6 @@ for project root directories.")
     ;; Use ido for completing-read
     (use-package ido-ubiquitous :ensure t)
     (ido-ubiquitous-mode)
-
-    (use-package helm-ag :ensure t)
-    (customize-set-variable 'helm-ag-base-command "ack --nocolor --nogroup")
 
     ) ;; end with-demote-errors
   ) ;; end emacs 24.3+ customizations

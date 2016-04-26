@@ -3,6 +3,7 @@
 (use-package helm :ensure t)
 (require 'helm-config)
 (require 'helm-regexp)
+(require 'nispio/helm-command-extra)
 
 ;; Helm interface for describe bindings
 ;; (source: https://github.com/emacs-helm/helm-descbinds)

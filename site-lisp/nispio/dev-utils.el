@@ -32,7 +32,7 @@
   (let ((marker (point-marker))
         text)
     (when (use-region-p)
-      (setq text buffer-substring-no-properties start end)
+      (setq text (buffer-substring-no-properties start end))
       (delete-region start end))
     (insert (mapconcat 'identity `("{" ,text "}") "\n"))
     (c-indent-region marker (point) 'quiet)
