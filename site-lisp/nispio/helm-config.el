@@ -3,15 +3,17 @@
 (use-package helm :ensure t)
 (require 'helm-config)
 (require 'helm-regexp)
-(require 'nispio/helm-command-extra)
 
 ;; Helm interface for describe bindings
 ;; (source: https://github.com/emacs-helm/helm-descbinds)
 (use-package helm-descbinds  :ensure t)
 
-;; Use Helm to choose from a list of Helm commands
-;; (source: https://github.com/vapniks/helm-helm-commands)
-(use-package helm-helm-commands :ensure t)
+(use-package helm-swoop :ensure t)
+(use-package helm-ag :ensure t)
+
+(require 'nispio/helm-command-extra)
+(require 'nispio/helm-ag-extra)
+(require 'nispio/helm-customize-extra)
 
 
 

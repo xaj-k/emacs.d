@@ -330,7 +330,6 @@
     (electric-pair-mode 1) ; Enable automatic bracket closing
 
     (require 'nispio/helm-config)
-    (require 'nispio/helm-command-extra)
     (nispio/setup-helm-apropos)
 
     (define-key my-map (kbd "C-8") helm-command-map)
@@ -345,11 +344,18 @@
     (define-key my-map (kbd "M-s O") 'helm-multi-occur)
     (define-key my-map (kbd "M-s r") 'helm-register)
 
-    (use-package helm-swoop :ensure t)
+    ;; Helm-Swoop bindings
     (define-key my-map (kbd "M-s i") 'helm-swoop)
     (define-key my-map (kbd "M-s I") 'helm-multi-swoop)
     (define-key my-map (kbd "M-s B") 'helm-multi-swoop-all)
 
+    ;; FIXME: Move this elsewhere...
+    (global-set-key (kbd "<XF86Favorites>") 'helm-descbinds)
+    (define-key my-map (kbd "<XF86Favorites>") 'helm-descbinds)
+    (define-key my-map (kbd "H-C-s") 'helm-descbinds)
+
+    ;; Helm occur from isearch bindings
+    ;; TODO: Shouldn't this be a setup function?
     (let ((map isearch-mode-map))
       (define-key map [remap isearch-occur] 'helm-occur-from-isearch)
       (define-key map (kbd "H-M-s o") 'helm-occur-from-isearch)
@@ -357,11 +363,9 @@
       (define-key map (kbd "H-M-s i") 'helm-swoop-from-isearch)
       (define-key map (kbd "H-M-s B") 'helm-multi-swoop-all-from-isearch))
 
-    (use-package helm-ag :ensure t)
     (define-key my-map (kbd "M-s A") 'helm-do-ag)
     (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
 
-    (require 'nispio/helm-ag-extra)
     (nispio/setup-helm-ag-narrow)
 
     ;; Use a more powerful alternative to ido-mode's flex matching.
