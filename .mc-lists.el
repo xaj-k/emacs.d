@@ -103,6 +103,7 @@
         describe-key-briefly
         dired
         display-local-help
+        edebug-go-mode
         end-of-defun
         eval-expression
         goto-line

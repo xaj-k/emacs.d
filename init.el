@@ -226,6 +226,11 @@
   ;; (source: https://github.com/magnars/multiple-cursors.el)
   (use-package multiple-cursors :ensure t)
 
+  ;; Modify the behavoir of mc/mark-lines to set a temporary goal column and
+  ;; allow skipping of lines during mc/mark-more-like-this-extended.
+  (require 'nispio/mc-extra)
+  (nispio/mc-setup-mark-lines)
+
   (nispio/after 'multiple-cursors
     (define-key mc/keymap (kbd "M-x") 'execute-extended-command)
     (define-key mc/keymap (kbd "C-!") 'nispio/mc-insert-numbers-1)
@@ -338,6 +343,7 @@
     (define-key my-map (kbd "M-s n") 'find-name-dired)
     (define-key my-map (kbd "C-h b") 'helm-descbinds)
     (define-key my-map (kbd "C-h a") 'helm-apropos) ;; Replaces apropos-command
+    (define-key my-map (kbd "C-h f") 'helm-apropos) ;; Replaces describe-function
     (define-key my-map (kbd "C-h p") 'helm-list-elisp-packages)
     (define-key my-map (kbd "M-s b") 'nispio/helm-moccur-buffers)
     (define-key my-map (kbd "M-s o") 'helm-occur) ;; Replaces occur

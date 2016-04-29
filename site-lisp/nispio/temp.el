@@ -857,3 +857,27 @@ of the day at point (if any) or the current HH:MM time."
 
 
 
+(defun helm-ag-replacement (&optional dir query)
+  "Drop-in replacement for `helm-ag' which allows for specifying the query string directly."
+  (interactive (list (helm-ag--get-default-directory) (helm-ag--query)))
+  (helm-ag--init-state)
+  (let (targets basedir)
+    (if (listp dir)
+        (progn
+          (setq basedir default-directory)
+          (setq targets (mapcar 'expand-file-name dir)))
+      (setq basedir (expand-file-name (or dir default-directory))))
+    (let ((helm-ag--default-directory basedir)
+          (helm-ag--default-target targets))
+      (setq helm-ag--last-query (or query (helm-ag--query)))
+      (helm-attrset 'search-this-file nil helm-ag-source)
+      (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
+      (helm :sources '(helm-ag-source) :buffer "*helm-ag*" :keymap helm-ag-map))))
+
+
+(defun helm-ag-non-interactive (query &optional basedir targets)
+  (cl-letf (((symbol-function 'helm-ag--get-default-directory)
+             `(lambda () (or (list ,@targets) default-directory)))
+            ((symbol-function 'helm-ag--query)
+             `(lambda () ,query)))
+    (helm-ag basedir)))
