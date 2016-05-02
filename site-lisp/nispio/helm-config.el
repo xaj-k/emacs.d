@@ -6,14 +6,12 @@
 
 ;; Helm interface for describe bindings
 ;; (source: https://github.com/emacs-helm/helm-descbinds)
-(use-package helm-descbinds  :ensure t)
-
+(use-package helm-descbinds :ensure t)
 (use-package helm-swoop :ensure t)
 (use-package helm-ag :ensure t)
 
-(require 'nispio/helm-command-extra)
+(require 'nispio/helm-extra)
 (require 'nispio/helm-ag-extra)
-(require 'nispio/helm-customize-extra)
 
 
 

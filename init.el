@@ -343,6 +343,7 @@
     (define-key my-map (kbd "M-s n") 'find-name-dired)
     (define-key my-map (kbd "C-h b") 'helm-descbinds)
     (define-key my-map (kbd "C-h a") 'helm-apropos) ;; Replaces apropos-command
+    (define-key my-map (kbd "C-h A") 'nispio/helm-customize-group)
     (define-key my-map (kbd "C-h f") 'helm-apropos) ;; Replaces describe-function
     (define-key my-map (kbd "C-h p") 'helm-list-elisp-packages)
     (define-key my-map (kbd "M-s b") 'nispio/helm-moccur-buffers)

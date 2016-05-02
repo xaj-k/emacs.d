@@ -25,7 +25,7 @@
     :persistent-action (lambda (candidate)
                          (helm-elisp--persistent-help
                           candidate 'helm-describe-function))
-    :persistent-help "Describe command"
+    :persistent-help "Describe command (use \\[nispio/helm--run-command] to run)"
     :action '(("Describe function" . helm-describe-function)
               ("Find function" . helm-find-function)
               ("Info lookup" . helm-info-lookup-symbol)
@@ -41,4 +41,41 @@
   "Make the commands section of `helm-apropos' behave more like `helm-M-x'"
   (advice-add 'helm-apropos :around #'nispio/ad-around-helm-apropos))
 
-(provide 'nispio/helm-command-extra)
+
+
+(require 'helm-mode)
+
+;;;###autoload
+(defun nispio/helm-comp-read (prompt collection
+         &optional predicate require-match initial-input hist def inherit-input-method)
+  (let ((completion-ignore-case t))
+    (helm-comp-read prompt collection
+                    :test predicate
+                    :must-match require-match
+                    :initial-input initial-input
+                    :history hist
+                    :default def)))
+
+;;;###autoload
+(defun nispio/helm-customize-group (&optional group other-window)
+  (interactive)
+  (cl-letf ((completing-read-function #'nispio/helm-comp-read))
+    (if (called-interactively-p)
+        (progn
+          (setq this-command 'customize-group)
+          (call-interactively this-command))
+      (customize-group group other-window))))
+
+;;;###autoload
+(defun nispio/helm-customize-option (symbol)
+  (interactive (list nil))
+  (cl-letf ((completing-read-function #'nispio/helm-comp-read))
+    (if (called-interactively-p)
+        (progn
+          (setq this-command 'customize-option)
+          (call-interactively this-command))
+      (customize-option symbol))))
+
+
+
+(provide 'nispio/helm-extra)
