@@ -54,6 +54,7 @@
 (define-key my-map (kbd "C-h C-k") 'nispio/insert-key-description)
 (define-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
 (global-set-key (kbd "C-h C-M-k") 'nispio/unbind-local-key)
+(global-set-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
 
 ;; This is a hack because my M-s keybinding disappear in some modes
 (define-key my-map (kbd "M-s") (key-binding (kbd "M-s")))
@@ -88,6 +89,8 @@
 (setq require-final-newline t)         ; Always end a file with a newline
 (setq frame-title-format "emacs - %b") ; Set frame title to "emacs - <buffer name>"
 (setq-default fill-column 80)          ; Set the default fill-column to 80
+(setq enable-recursive-minibuffers t)  ; Allow recursive minibuffers
+(minibuffer-depth-indicate-mode 1)     ; Show the current minibuffer depth if depth > 1
 
 ;; Set tab width to 4 and put tab stops every 4 characters
 (setq-default tab-width 4)
@@ -334,16 +337,40 @@
   (with-demoted-errors "INIT ERROR: %s"
     (electric-pair-mode 1) ; Enable automatic bracket closing
 
+    ;; Use Helm for incremental completion and selection narrowing
+    ;; (source: https://github.com/emacs-helm/helm)
+    (use-package helm :ensure t)
     (require 'nispio/helm-config)
+    (nispio/setup-helm-occur-from-isearch)
+
+    (require 'nispio/helm-extra)
     (nispio/setup-helm-apropos)
+    (define-key my-map (kbd "C-h A") 'nispio/helm-customize-group)
+
+    ;; Helm interface for describe bindings
+    ;; (source: https://github.com/emacs-helm/helm-descbinds)
+    (use-package helm-descbinds :ensure t)
+    (helm-descbinds-mode 1)
+    (define-key my-map (kbd "C-h b") nil)
+    (global-set-key (kbd "<XF86Favorites>") 'helm-descbinds)
+
+    ;; Helm-Swoop is a more flexible flavor of helm-occur
+    (use-package helm-swoop :ensure t)
+    (define-key my-map (kbd "M-s i") 'helm-swoop)
+    (define-key my-map (kbd "M-s I") 'helm-multi-swoop)
+    (define-key my-map (kbd "M-s B") 'helm-multi-swoop-all)
+
+    (use-package helm-ag :ensure t)
+    (require 'nispio/helm-ag-extra)
+    (nispio/setup-helm-ag-narrow)
+    (define-key my-map (kbd "M-s A") 'helm-do-ag)
+    (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
 
     (define-key my-map (kbd "C-8") helm-command-map)
     (define-key helm-command-map (kbd "C-SPC") 'helm-resume)
     (define-key helm-map (kbd "M-1") 'nispio/helm-full-frame)
     (define-key my-map (kbd "M-s n") 'find-name-dired)
-    (define-key my-map (kbd "C-h b") 'helm-descbinds)
     (define-key my-map (kbd "C-h a") 'helm-apropos) ;; Replaces apropos-command
-    (define-key my-map (kbd "C-h A") 'nispio/helm-customize-group)
     (define-key my-map (kbd "C-h f") 'helm-apropos) ;; Replaces describe-function
     (define-key my-map (kbd "C-h p") 'helm-list-elisp-packages)
     (define-key my-map (kbd "M-s b") 'nispio/helm-moccur-buffers)
@@ -351,33 +378,10 @@
     (define-key my-map (kbd "M-s O") 'helm-multi-occur)
     (define-key my-map (kbd "M-s r") 'helm-register)
 
-    ;; Helm-Swoop bindings
-    (define-key my-map (kbd "M-s i") 'helm-swoop)
-    (define-key my-map (kbd "M-s I") 'helm-multi-swoop)
-    (define-key my-map (kbd "M-s B") 'helm-multi-swoop-all)
-
-    ;; FIXME: Move this elsewhere...
-    (global-set-key (kbd "<XF86Favorites>") 'helm-descbinds)
-    (define-key my-map (kbd "<XF86Favorites>") 'helm-descbinds)
-    (define-key my-map (kbd "H-C-s") 'helm-descbinds)
-
-    ;; Helm occur from isearch bindings
-    ;; TODO: Shouldn't this be a setup function?
-    (let ((map isearch-mode-map))
-      (define-key map [remap isearch-occur] 'helm-occur-from-isearch)
-      (define-key map (kbd "H-M-s o") 'helm-occur-from-isearch)
-      (define-key map (kbd "H-M-s O") 'helm-multi-occur-from-isearch)
-      (define-key map (kbd "H-M-s i") 'helm-swoop-from-isearch)
-      (define-key map (kbd "H-M-s B") 'helm-multi-swoop-all-from-isearch))
-
-    (define-key my-map (kbd "M-s A") 'helm-do-ag)
-    (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
-
-    (nispio/setup-helm-ag-narrow)
-
     ;; Use a more powerful alternative to ido-mode's flex matching.
     ;; SOURCE: https://github.com/lewang/flx.git
     (use-package flx-ido :ensure t)
+    (flx-ido-mode 1)
 
     ;; Manage and navigate projects easily in Emacs
     ;; SOURCE: https://github.com/bbatsov/projectile.git
