@@ -10,10 +10,9 @@
 (set-foreground-color "white smoke")
 
 (message "Welcome to Emacs!\nThis session brought to you by:\n%s"
-(mapconcat 'identity command-line-args " "))
+         (mapconcat 'identity command-line-args " "))
 
 (message "Loading init file...")
-(switch-to-buffer "*Messages*")
 
 ;; My "must-have" key bindings get set before anything can go wrong.
 (global-set-key (kbd "<C-tab>") 'next-multiframe-window)
@@ -57,7 +56,7 @@
 (global-set-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
 
 ;; This is a hack because my M-s keybinding disappear in some modes
-(define-key my-map (kbd "M-s") (key-binding (kbd "M-s")))
+(define-key my-map (kbd "M-s") (lookup-key global-map (kbd "M-s")))
 
 (require 'nispio/rect-utils)
 (define-key my-map (kbd "C-x r Y") 'nispio/yank-rectangle-from-kill-ring)
@@ -525,6 +524,9 @@ for project root directories.")
     (use-package ido-ubiquitous :ensure t)
     (ido-ubiquitous-mode)
 
+    (use-package which-key :ensure t :diminish "")
+    (which-key-mode 1)
+
     ) ;; end with-demote-errors
   ) ;; end emacs 24.3+ customizations
 
@@ -576,7 +578,7 @@ for project root directories.")
     (define-key map (kbd "C-s") 'hs-show-block)
     (define-key map (kbd "C-M-h") 'hs-hide-all)
     (define-key map (kbd "C-M-s") 'hs-show-all)
-    map ))
+    map))
 (define-key my-map (kbd "C-2") nispio/hs-mode-map)
 
 ;; Add [] to the list of collapsible entries in js mode (for JSON files)

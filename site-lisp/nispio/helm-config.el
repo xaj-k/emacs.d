@@ -1,17 +1,5 @@
-;; Use Helm for incremental completion and selection narrowing
-;; (source: https://github.com/emacs-helm/helm)
-(use-package helm :ensure t)
 (require 'helm-config)
 (require 'helm-regexp)
-
-;; Helm interface for describe bindings
-;; (source: https://github.com/emacs-helm/helm-descbinds)
-(use-package helm-descbinds :ensure t)
-(use-package helm-swoop :ensure t)
-(use-package helm-ag :ensure t)
-
-(require 'nispio/helm-extra)
-(require 'nispio/helm-ag-extra)
 
 
 
@@ -58,5 +46,13 @@ be run during `helm-initialize' and should be added to the hook
     (delete-other-windows)))
 
 
+
+(defun nispio/setup-helm-occur-from-isearch ()
+  ;; Helm occur from isearch bindings
+  (let ((map isearch-mode-map))
+    (define-key map [remap isearch-occur] 'helm-occur-from-isearch)
+    (define-key map (kbd "M-s O") 'helm-multi-occur-from-isearch)
+    (define-key map (kbd "M-s i") 'helm-swoop-from-isearch)
+    (define-key map (kbd "M-s B") 'helm-multi-swoop-all-from-isearch)))
 
 (provide 'nispio/helm-config)

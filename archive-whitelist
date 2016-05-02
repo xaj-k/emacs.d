@@ -22,12 +22,14 @@ dash
 diminish
 dired+
 discover-my-major
+dumb-jump
 elscreen
 epl
 f
 flx
 flx-ido
 ggtags
+git-commit
 goto-chg
 helm
 helm-ag
@@ -47,6 +49,8 @@ json-reformat
 json-rpc
 json-snatcher
 lorem-ipsum
+magit
+magit-popup
 makey
 matlab-mode
 move-text
@@ -71,6 +75,7 @@ visual-regexp
 visual-regexp-steroids
 vlf
 which-key
+with-editor
 ws-butler
 yasnippet
 zygospore
