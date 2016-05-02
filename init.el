@@ -53,7 +53,7 @@
 (define-key my-map (kbd "C-h C-k") 'nispio/insert-key-description)
 (define-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
 (global-set-key (kbd "C-h C-M-k") 'nispio/unbind-local-key)
-(global-set-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
+(global-set-key (kbd "C-h k") 'nispio/locate-key-binding)
 
 ;; This is a hack because my M-s keybinding disappear in some modes
 (define-key my-map (kbd "M-s") (lookup-key global-map (kbd "M-s")))
@@ -113,11 +113,11 @@
   (ido-mode 1)
 
   (setq package-archives '())
-  (add-to-list 'package-archives (cons "local-misc" (concat user-emacs-directory "local-elpa-misc/")))
+  (add-to-list 'package-archives `("local-misc" . ,(concat user-emacs-directory "local-elpa-misc/")))
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-  ;; (add-to-list 'package-archives '("local-elpa" . "/datastore/jph/emacs/local-elpa/"))
+  ;; (setq package-archives `("local-elpa" . ,(concat user-emacs-directory "local-elpa/")))
   (require 'nispio/package-config)
 
   ;; Display line numbers in all programming buffers
