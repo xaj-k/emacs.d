@@ -359,21 +359,21 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (nispio/after 'ede
   ;; File containing local project roots on this machine
   (with-demoted-errors "Error loading local projects: %s"
-	(let ((file "~/.emacs.d/local-projects.el"))
-	  (when (file-exists-p file)
-		(load-file file))))
+    (let ((file "~/.emacs.d/local-projects.el"))
+      (when (file-exists-p file)
+        (load-file file))))
 
-  ;; Create a project for xmidas
-  (ede-cpp-root-project "xmidas"
-						:name "xmidas"
-						:file (substitute-in-file-name "$XMDISK/xm/version.txt")
-						:include-path '("/inc"
-										"/include"
-										"/include/midas"
-										)
-						:targets 'nil
-						:spp-table '(("__cplusplus" . 1))
-						))
+  ;; ;; Create a project for xmidas
+  ;; (ede-cpp-root-project "xmidas"
+  ;;                       :name "xmidas"
+  ;;                       :file (substitute-in-file-name "$XMDISK/xm/version.txt")
+  ;;                       :include-path '("/inc"
+  ;;                                       "/include"
+  ;;                                       "/include/midas"
+  ;;                                       )
+  ;;                       :targets 'nil
+  ;;                       :spp-table '(("__cplusplus" . 1))
+  ;;                       ))
 
 (defun nispio/semantic-ia-fast-jump (point)
   "Modification of semantic-ia-fast-jump to use push-mark"
@@ -411,7 +411,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 
 (autoload 'doxymacs-mode "doxymacs")
-(add-hook 'c-mode-common-hook 'doxymacs-mode)
+;(add-hook 'c-mode-common-hook 'doxymacs-mode)
 
 
 
