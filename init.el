@@ -362,8 +362,10 @@
     (use-package helm-ag :ensure t)
     (require 'nispio/helm-ag-extra)
     (nispio/setup-helm-ag-narrow)
-    (define-key my-map (kbd "M-s A") 'helm-do-ag)
-    (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
+
+    (require 'nispio/helm-silver)
+    (define-key my-map (kbd "M-s A") 'helm-silver)
+    (define-key my-map (kbd "M-s a") 'helm-silver-project-root)
 
     (define-key my-map (kbd "C-8") helm-command-map)
     (define-key helm-command-map (kbd "C-SPC") 'helm-resume)
