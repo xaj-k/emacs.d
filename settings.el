@@ -17,7 +17,7 @@
    (global-mode-string global-mode-string)
    mode-line-end-spaces))
 
-(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.5")
+(set-face-attribute 'default nil :font "DejaVu Sans Mono-18.5")
 (load-theme 'nispio-dark t)
 
 (custom-set-variables

@@ -29,7 +29,7 @@
 ;; Helper macro to replace `eval-after-load'
 (defmacro nispio/after (mode &rest body)
   "`eval-after-load' MODE evaluate BODY."
-  (declare (indent defun))
+  (declare (indent 1))
   `(eval-after-load ,mode
      '(progn ,@body nil)))
 

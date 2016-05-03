@@ -881,3 +881,39 @@ of the day at point (if any) or the current HH:MM time."
             ((symbol-function 'helm-ag--query)
              `(lambda () ,query)))
     (helm-ag basedir)))
+
+
+(defvar nispio/bad-char-alist
+  (list
+   (cons "“" "\"")
+   (cons "”" "\"")
+   (cons "…" "...")
+   ))
+
+(defun nispio/regex-join--or (sequence)
+  (concat "\\(?:"
+          (mapconcat 'identity sequence "\\|")
+          "\\)"))
+
+(nispio/regex-join--or (mapcar 'car nispio/bad-char-alist))
+
+(defun nispio/remove-bad-chars (start end)
+  (interactive (list
+                (and (use-region-p) (region-beginning))
+                (and (use-region-p) (region-end))))
+  (save-restriction
+    (widen)
+    (let ((start-marker (copy-marker (or start (point-min))))
+          (end-marker (copy-marker (or end (point-max))))
+          (regex-list (mapcar 'car nispio/bad-char-alist))
+          (pattern (nispio/regex-join--or regex-list)))
+      (save-excursion
+        (goto-char start-marker)
+        (while (re-search-forward pattern end-marker t)
+          (let ((saved-match-data (match-data))
+                (match (match-string 0))
+                replacement)
+            (setq replacement
+                  (assoc-default match nispio/bad-char-alist 'string-match))
+            (set-match-data saved-match-data)
+            (replace-match replacement nil t)))))))
