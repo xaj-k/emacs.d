@@ -54,14 +54,6 @@ activated before the fake cursor becomes active."
       (forward-char))
     (mc/maybe-multiple-cursors-mode)))
 
-(defun nispio/mc-insert-numbers-1 (&optional arg)
-  "Insert increasing numbers for each cursor, starting at 1 or ARG."
-  (interactive "*P")
-  (setq this-command 'mc/insert-numbers)
-  (setq mc--this-command 'mc/insert-numbers)
-  (setq current-prefix-arg (or arg 1))
-  (call-interactively 'mc/insert-numbers))
-
 ;; (defun nispio/region-to-phi-rectangle (start end &optional fill)
 ;;   (interactive "r\nP")
 ;;   (unless (fboundp 'phi-rectangle-set-mark-command)

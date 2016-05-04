@@ -29,6 +29,12 @@
   (setq-default my-mode nil)
   (message "my-global-mode disabled"))
 
+(global-set-key (kbd "<C-m>")
+ (defun meta-return (&optional arg)
+
+   (interactive "p")
+   (execute-kbd-macro [M-return]) arg))
+
 (defun nispio/fake-M-RET ()
   "Simulating pressing M-RET"
   (interactive)
@@ -63,7 +69,7 @@
 (define-key my-map (kbd "C-x <f1>") 'nispio/buffer-file-name)
 ;(define-key my-map (kbd "<f11>") 'nispio/toggle-fullscreen)
 (define-key my-map (kbd "C-j") 'newline-and-indent)
-(define-key my-map (kbd "<C-m>") 'nispio/fake-M-RET)
+;(define-key my-map (kbd "<C-m>") 'nispio/fake-M-RET)
 (define-key my-map [remap list-buffers] 'ibuffer)
 (define-key my-map (kbd "<menu>") 'menu-bar-open)
 (define-key my-map (kbd "C-H-]") 'abort-recursive-edit)

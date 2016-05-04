@@ -88,6 +88,7 @@
         sh-end-of-command
         smex
         transpose-sexps
+        transpose-words
         uncomment-region
         upcase-region
         wdired-upcase-word
@@ -135,7 +136,6 @@
         term-char-mode
         term-send-backspace
         term-send-raw
-        transpose-words
         view-lossage
         wdired-finish-edit
         widen

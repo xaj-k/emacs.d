@@ -124,6 +124,23 @@ treat as N=1."
 		 (setq key (kbd (concat prefix-string digit-string)))
 		 (unless (global-key-binding key)
 		   (global-set-key key 'digit-argument)))
-	   prefix-list))))
+           prefix-list))))
+
+
+
+(defmacro kmacro (name keys &optional doc)
+  "Define a named keyboard macro.
+NAME should be an unquoted symbol name to which the function
+definition will be bound.  KEYS should be a string constant in
+the format used for saving keyboard macros. DOC is an optional
+docstring to be associated with the kbd macro. Returns NAME"
+  (prog1
+      `(defun ,name (&optional arg)
+         ,doc
+         (interactive "p")
+         (kmacro-exec-ring-item (list ,(kbd keys) 0 "%d") arg))
+    (put name 'kmacro t)))
+(font-lock-add-keywords 'emacs-lisp-mode '(("(\\(kmacro\\)\\_>" 1 'font-lock-keyword-face)))
+
 
 (provide 'nispio/key-utils)

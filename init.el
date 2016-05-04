@@ -47,6 +47,7 @@
 (require 'nispio/my-mode)
 (enable-my-global-mode)
 (global-set-key (kbd "<pause>") 'enable-my-global-mode)
+(global-set-key (kbd "<C-m>") (kmacro meta-return "<M-return>"))
 
 (require 'nispio/key-utils)
 (nispio/unbind-digit-arguments)
@@ -54,6 +55,9 @@
 (define-key my-map (kbd "C-h k") 'nispio/locate-key-binding)
 (global-set-key (kbd "C-h C-M-k") 'nispio/unbind-local-key)
 (global-set-key (kbd "C-h k") 'nispio/locate-key-binding)
+
+;; Add greek characters to "C-x 8" map
+(require 'nispio/unicode)
 
 ;; This is a hack because my M-s keybinding disappear in some modes
 (define-key my-map (kbd "M-s") (lookup-key global-map (kbd "M-s")))

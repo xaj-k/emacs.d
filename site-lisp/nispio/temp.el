@@ -882,6 +882,7 @@ of the day at point (if any) or the current HH:MM time."
              `(lambda () ,query)))
     (helm-ag basedir)))
 
+
 
 (defvar nispio/bad-char-alist
   (list
@@ -917,3 +918,19 @@ of the day at point (if any) or the current HH:MM time."
                   (assoc-default match nispio/bad-char-alist 'string-match))
             (set-match-data saved-match-data)
             (replace-match replacement nil t)))))))
+
+
+
+(let ((map (make-sparse-keymap)))
+  (define-key map [?\e t] (lambda ()
+             (interactive)
+             (message "this will be triggered by Meta combinations")))
+  (define-key map [?\e t] (lambda ()
+             (interactive)
+             (message "this will be triggered by Meta combinations")))
+  (define-key map (kbd "M-a") 'some-command)
+  (define-key map (kbd "C-a R") 'some-command)
+  (define-key map [t] (lambda ()
+                        (interactive)
+                        (message "this will be skipped by Meta combinations")))
+  (set-transient-map map))
