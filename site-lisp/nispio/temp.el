@@ -964,21 +964,3 @@ in the appropriate direction to include current line."
     (call-interactively 'forward-char)
     )))
 
-
-
-(defun package-update (package &optional version)
-  (unless package-archive-contents
-    (package-refresh-contents))
-  (let ((target-version (or version '(0)))
-        (current-version (if (package-installed-p package)
-                             (pkg-info-package-version package)
-                           '(-1)))
-        (pkg-desc (cadr (assoc package package-archive-contents)))
-        pkg-version)
-    (if pkg-desc
-        (setq pkg-version (package-desc-version pkg-desc))
-      (error "Package not found in package archives!"))
-    (when (version-list-< current-version target-version)
-      (if (version-list-< pkg-version target-version)
-          (error "Version not available")
-        (package-install-from-archive pkg-desc)))))
