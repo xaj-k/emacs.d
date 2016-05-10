@@ -934,3 +934,51 @@ of the day at point (if any) or the current HH:MM time."
                         (interactive)
                         (message "this will be skipped by Meta combinations")))
   (set-transient-map map))
+
+
+
+;;(source: http://emacs.stackexchange.com/a/22166/93)
+(defun my-mark-current-line ()
+  "Uses shift selection to select the current line.
+When there is an existing shift selection, extends the selection
+in the appropriate direction to include current line."
+  (interactive)
+  (cond
+   ;; Deal with the case where we are shift selecting "backwards"
+   ((and (and (consp transient-mark-mode)
+              (eq 'only (car transient-mark-mode)))
+         (and (use-region-p)
+              (eq (region-beginning) (point))))
+    (end-of-line)
+    (forward-char)
+    (setq this-command-keys-shift-translated t)
+    (call-interactively 'backward-char)
+    (call-interactively 'beginning-of-line)
+    (call-interactively 'backward-char) ;<= comment out if desired
+    )
+   ;; Otherwise select forward
+   (t
+    (beginning-of-line)
+    (setq this-command-keys-shift-translated t)
+    (call-interactively 'end-of-line)
+    (call-interactively 'forward-char)
+    )))
+
+
+
+(defun package-update (package &optional version)
+  (unless package-archive-contents
+    (package-refresh-contents))
+  (let ((target-version (or version '(0)))
+        (current-version (if (package-installed-p package)
+                             (pkg-info-package-version package)
+                           '(-1)))
+        (pkg-desc (cadr (assoc package package-archive-contents)))
+        pkg-version)
+    (if pkg-desc
+        (setq pkg-version (package-desc-version pkg-desc))
+      (error "Package not found in package archives!"))
+    (when (version-list-< current-version target-version)
+      (if (version-list-< pkg-version target-version)
+          (error "Version not available")
+        (package-install-from-archive pkg-desc)))))
