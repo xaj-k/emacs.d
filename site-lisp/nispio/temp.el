@@ -937,30 +937,22 @@ of the day at point (if any) or the current HH:MM time."
 
 
 
-;;(source: http://emacs.stackexchange.com/a/22166/93)
-(defun my-mark-current-line ()
+;; (source: http://emacs.stackexchange.com/a/22166/93)
+(defun nispio/current-line (&optional arg)
   "Uses shift selection to select the current line.
 When there is an existing shift selection, extends the selection
 in the appropriate direction to include current line."
-  (interactive)
-  (cond
-   ;; Deal with the case where we are shift selecting "backwards"
-   ((and (and (consp transient-mark-mode)
-              (eq 'only (car transient-mark-mode)))
-         (and (use-region-p)
-              (eq (region-beginning) (point))))
-    (end-of-line)
-    (forward-char)
-    (setq this-command-keys-shift-translated t)
-    (call-interactively 'backward-char)
-    (call-interactively 'beginning-of-line)
-    (call-interactively 'backward-char) ;<= comment out if desired
-    )
-   ;; Otherwise select forward
-   (t
-    (beginning-of-line)
-    (setq this-command-keys-shift-translated t)
-    (call-interactively 'end-of-line)
-    (call-interactively 'forward-char)
-    )))
+  (interactive "p")
+  (let ((oldval (or (cdr-safe transient-mark-mode) transient-mark-mode))
+        (backwards (and mark-active (> (mark) (point))))
+        (beg (and mark-active (mark-marker))))
+    (unless beg
+      (if backwards (end-of-line) (beginning-of-line))
+      (setq beg (point-marker)))
+    (if backwards (end-of-line (- 1 arg)) (beginning-of-line (+ 1 arg)))
+    (unless mark-active
+      (push-mark beg nil t))
+    (setq transient-mark-mode (cons 'only oldval))))
+
+(define-key my-map (kbd "M-l") 'nispio/current-line)
 

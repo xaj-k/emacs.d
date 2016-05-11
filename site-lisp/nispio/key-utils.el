@@ -23,40 +23,82 @@
             (get-text-property (point) 'keymap)
             (get-text-property (point) 'local-map)))))
 
+;; Get raw text printed by a help function
+(defun help-text (help-fun &rest args)
+  (let ((help-xref-following t))
+    (with-temp-buffer
+      (help-mode)
+      (apply help-fun args)
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+;; This is lifted directly from help.el
+(defun describe-key--interactive-args ()
+  (let ((enable-disabled-menus-and-buttons t)
+        (cursor-in-echo-area t)
+        saved-yank-menu)
+    (unwind-protect
+        (let (key)
+          ;; If yank-menu is empty, populate it temporarily, so that
+          ;; "Select and Paste" menu can generate a complete event.
+          (when (null (cdr yank-menu))
+            (setq saved-yank-menu (copy-sequence yank-menu))
+            (menu-bar-update-yank-menu "(any string)" nil))
+          (setq key (read-key-sequence "Describe key (or click or menu item): "))
+          (list
+           key
+           (prefix-numeric-value current-prefix-arg)
+           ;; If KEY is a down-event, read and include the
+           ;; corresponding up-event.  Note that there are also
+           ;; down-events on scroll bars and mode lines: the actual
+           ;; event then is in the second element of the vector.
+           (and (vectorp key)
+                (let ((last-idx (1- (length key))))
+                  (and (eventp (aref key last-idx))
+                       (memq 'down (event-modifiers (aref key last-idx)))))
+                (or (and (eventp (aref key 0))
+                         (memq 'down (event-modifiers (aref key 0)))
+                         ;; However, for the C-down-mouse-2 popup
+                         ;; menu, there is no subsequent up-event.  In
+                         ;; this case, the up-event is the next
+                         ;; element in the supplied vector.
+                         (= (length key) 1))
+                    (and (> (length key) 1)
+                         (eventp (aref key 1))
+                         (memq 'down (event-modifiers (aref key 1)))))
+                (read-event))))
+      ;; Put yank-menu back as it was, if we changed it.
+      (when saved-yank-menu
+        (setq yank-menu (copy-sequence saved-yank-menu))
+        (fset 'yank-menu (cons 'keymap yank-menu))))))
+
 ;; Show a list of all key bindings for a given key sequence
 ;; (derived from: http://emacs.stackexchange.com/a/654/93)
-(defun nispio/locate-key-binding (key)
+(defun nispio/locate-key-binding (&optional key untranslated up-event)
   "Determine in which keymap KEY is defined."
-  (interactive "kPress key: ")
+  (interactive (describe-key--interactive-args))
   (if (key-binding key t)
-	  (let* ((desc (key-description key))
-			 (function (key-binding key t))
-			 (arglist (help-function-arglist function t))
-			 (usage (help-make-usage function arglist))
-			 (doc (documentation function))
-			 (at-point-binding (nispio/key-binding-at-point key))
-			 (minor-mode-binding (minor-mode-key-binding key))
-			 (local-binding (local-key-binding key))
-			 (global-binding (global-key-binding key))
-			 )
-		(with-help-window (help-buffer)
-		  (save-excursion
-			(read-only-mode -1)
-			(princ (format "Key Bindings for %s\n\n" desc))
-			(when at-point-binding
-			  (princ (format "At Point: %S\n" at-point-binding)))
-			(when minor-mode-binding
-			  (princ (format "Minor-mode: %s\n"
-							 (mapconcat (lambda (x) (format "%s: %s" (car x) (cdr x)))
-										minor-mode-binding "\n            "))))
-			(when (and local-binding (not (numberp local-binding)))
-			  (princ (format "Local: %s\n" local-binding)))
-			(when global-binding
-			  (princ (format "Global: %s\n" global-binding)))
-			(princ (format "\n%s\n\n%s" usage doc))
-			))
-		function)
-	(message "%s is undefined" (key-description key))))
+      (let* ((help-text (help-text 'describe-key key untranslated up-event))
+             (desc (key-description key))
+             (function (key-binding key t))
+             (at-point-binding (nispio/key-binding-at-point key))
+             (minor-mode-binding (minor-mode-key-binding key))
+             (local-binding (local-key-binding key))
+             (global-binding (global-key-binding key)))
+        (with-help-window (help-buffer)
+          (when at-point-binding
+            (princ (format "At Point: %S\n" at-point-binding)))
+          (when minor-mode-binding
+            (princ (format "Minor-mode: %s\n"
+                           (mapconcat (lambda (x) (format "%s: %s" (car x) (cdr x)))
+                                      minor-mode-binding "\n            "))))
+          (when (and local-binding (not (numberp local-binding)))
+            (princ (format "Local: %s\n" local-binding)))
+          (when global-binding
+            (princ (format "Global: %s\n" global-binding)))
+          (terpri)
+          (princ help-text))
+        function)
+    (message "%s is undefined" (key-description key))))
 
 (defun nispio/insert-key-description (key &optional arg)
 "Capture a keybinding directly from the keyboard and insert its string

@@ -160,6 +160,7 @@
   (nispio/after 'dired+
     ;; When opening a directory in dired, reuse the current buffer
     (diredp-toggle-find-file-reuse-dir 1)
+    (define-key dired-mode-map [mouse-2] 'diredp-mouse-find-file)
     (customize-set-variable 'diredp-hide-details-initially-flag nil))
 
   ;; Make ibuffer auto-update after changes

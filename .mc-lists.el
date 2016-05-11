@@ -103,6 +103,8 @@
         describe-key
         describe-key-briefly
         dired
+        diredp-find-file-reuse-dir-buffer
+        diredp-mouse-3-menu
         display-local-help
         edebug-go-mode
         end-of-defun
