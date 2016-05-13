@@ -534,6 +534,9 @@ for project root directories.")
     (use-package which-key :ensure t :diminish "")
     (which-key-mode 1)
 
+    (use-package zygospore :ensure t)
+    (define-key my-map (kbd "M-1") 'zygospore-toggle-delete-other-windows)
+
     ) ;; end with-demote-errors
   ) ;; end emacs 24.3+ customizations
 
