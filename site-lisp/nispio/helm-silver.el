@@ -108,6 +108,21 @@
           :input (helm-ag--insert-thing-at-point helm-ag-insert-at-point)
           :keymap helm-do-ag-map)))
 
+(defun helm-silver-magic-forward-char (arg)
+  "Move forward in user input or modify file pattern."
+  (interactive "P")
+  (cond
+   ((or arg (not (eobp)))
+    (forward-char (min (prefix-numeric-value arg)
+                       (- (point-max) (point)))))
+   ((search-backward "@" nil t))
+   (t
+    (beginning-of-line)
+    (insert "@")
+    (backward-char))))
+(define-key helm-ag-map (kbd "C-f") #'helm-silver-magic-forward-char)
+
+
 ;;;###autoload
 (defun helm-silver (&rest args)
   (interactive)
