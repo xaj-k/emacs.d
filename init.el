@@ -121,7 +121,7 @@
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-  ;; (setq package-archives `("local-elpa" . ,(concat user-emacs-directory "local-elpa/")))
+  ;; (setq package-archives `(("local-elpa" . ,(concat user-emacs-directory "local-elpa/"))))
   (require 'nispio/package-config)
 
   ;; Display line numbers in all programming buffers

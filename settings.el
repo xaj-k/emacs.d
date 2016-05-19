@@ -118,7 +118,8 @@
     ((sequence "TODO(t!)" "STARTED(s!)" "WAIT(w@/!)" "ASK(a)" "|" "ANSWERED(A@)" "CANCELLED(x@)" "DONE(d)" "COMPLETE(c!)"))))
  '(safe-local-variable-values
    (quote
-    ((eval add-hook
+    ((xmidas-macro-mode . t)
+     (eval add-hook
            (quote after-save-hook)
            (lambda nil
              (setq kill-ring nil))))))

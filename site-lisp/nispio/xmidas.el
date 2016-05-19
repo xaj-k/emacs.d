@@ -60,11 +60,55 @@
 ;; this has to be done in a hook. grumble grumble.
 (add-hook 'xmidas-mode-hook 'xmidas--initialize)
 
-(set (make-local-variable 'font-lock-defaults) '(xmidas-font-lock-keywords t))
+;(set (make-local-variable 'font-lock-defaults) '(xmidas-font-lock-keywords t))
+
+(defun midas-populate-syntax-table (table)
+  "Populate the given syntax table as necessary for Midas"
+  (modify-syntax-entry ?_  "_"     table)
+  (modify-syntax-entry ?\\ "\\"    table)
+  (modify-syntax-entry ?+  "."     table)
+  (modify-syntax-entry ?-  "."     table)
+  (modify-syntax-entry ?=  "."     table)
+  (modify-syntax-entry ?%  "."     table)
+  (modify-syntax-entry ?<  "."     table)
+  (modify-syntax-entry ?>  "."     table)
+  (modify-syntax-entry ?&  "."     table)
+  (modify-syntax-entry ?|  "."     table)
+  (modify-syntax-entry ?\' "\""    table)
+  (modify-syntax-entry ?\240 "."   table)
+  (modify-syntax-entry ?*  "."     table)
+  (modify-syntax-entry ?/  "."     table)
+  (modify-syntax-entry ?!  "<"     table)
+  (modify-syntax-entry ?\n ">"     table)
+  (modify-syntax-entry ?\^m ">"    table)
+
+  table)
+
+(defvar midas-syntax-table
+  (let ((table (make-syntax-table)))
+    (midas-populate-syntax-table table))
+  "The syntax table for X-Midas shell and macros")
+
+(defvar midas-macro-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") 'compile))
+  "Keymap for `midas-macro-mode'")
+
+(define-derived-mode xmidas-macro-mode prog-mode "MCR"
+  "Major mode for editing X-Midas Macros"
+  (setq-local comment-start "!")
+  (set-syntax-table midas-syntax-table)
+  (use-local-map midas-macro-mode-map)
+  (setq-local font-lock-defaults (list xmidas-font-lock-keywords nil t)))
 
 (defconst xmidas-keywords
-  '("abscissa" "fastfilter" "parse" "ttcmd" "acqmod" "fcalculator" "passfilt"
-"ttuner" "add" "fcreate" "pause" "tubiquitous" "advisory" "fft" "peakpick"
+  '("abscissa" "fastfilter" "parse" "ttcmd" "acqmod" "fcalculator"
+"res" "fcalc" "calc" "int1000" "diff1000" "max" "mod" "ent" "mov" "cos" "sin" "tan"
+"atan" "atan2" "asind" "sqrt" "log" "fix" "power2" "npow" "mux" "mag" "phase" "polar"
+"cosd" "sind" "tand" "atand" "atan2d" "acosd" "exp" "ln" "round" "norm" "vmux" "mag2"
+"phased" "rect" "bor" "band" "bnot" "bxor" "x<>y" "x?z:y" "fft" "ifft" "sum" "sums"
+"local" "startmacro" "endmacro" "startcontrols" "endcontrols" "result" "cxtune"
+"passfilt" "ttuner" "add" "fcreate" "pause" "tubiquitous" "advisory" "fft" "peakpick"
 "tutor" "amfsync" "fftsize" "phase" "twodthin" "ask" "filelist" "pipe" "typeof"
 "attach" "files" "polar" "ubiquitous" "audiocd" "filetransp" "polltc" "ungroup"
 "auxiliary" "filt3000" "polyeval" "uniform" "beep" "filtdec" "polyfit" "units"
@@ -160,7 +204,7 @@
 (defvar xmidas-font-lock-keywords
   (list
    ;; highlight all the reserved commands.
-   `(,(concat "\\_<" (regexp-opt xmidas-keywords) "\\_>") . font-lock-keyword-face))
+   (cons (concat "\\_<" (regexp-opt xmidas-keywords) "\\_>") 'font-lock-keyword-face))
   "Additional expressions to highlight in `xmidas-mode'.")
 
 (provide 'nispio/xmidas)
