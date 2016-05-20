@@ -80,7 +80,10 @@
 (define-key my-map (kbd "<S-prior>") 'nispio/scroll-down-lines)
 (define-key my-map (kbd "<S-next>") 'nispio/scroll-up-lines)
 (define-key my-map (kbd "C-x K") 'nispio/delete-this-file)
-(define-key my-map (kbd "C-5") 'my-align-regexp)
+
+(define-key my-map (kbd "C-c C-n") 'nispio/end-of-column)
+(define-key my-map (kbd "C-c C-p") 'nispio/beginning-of-column)
+(define-key my-map (kbd "M-s s") 'nispio/sort-this-column)
 
 ;; Basic editor configuration
 (setq-default truncate-lines t)        ; Truncate lines by default
@@ -239,6 +242,7 @@
   (nispio/mc-setup-mark-lines)
 
   (nispio/after 'multiple-cursors
+    (define-key mc/keymap (kbd "C-c C-v") 'mc/vertical-align-with-space)
     (define-key mc/keymap (kbd "M-x") 'execute-extended-command)
     (define-key mc/keymap (kbd "C-!") 'nispio/mc-insert-numbers-1)
     (define-key mc/keymap (kbd "C-1") 'mc/insert-numbers))
@@ -255,6 +259,7 @@
   (define-key my-map (kbd "<C-down-mouse-1>") 'mc/toggle-cursor-on-click)
   (define-key my-map (kbd "<C-mouse-1>") 'ignore)
   (define-key my-map (kbd "M-s M-s") 'mc--mark-symbol-at-point)
+  (define-key my-map (kbd "C-c S-C-n") 'nispio/mark-this-column)
 
   ;; TODO: find a better way to set these bindings in special cases
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)

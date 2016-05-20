@@ -339,6 +339,43 @@ to nil."
     (setq x (append (last x n) (butlast x n)))
     (if consp (nispio/list-to-cons x) x)))
 
+
+
+(defun nispio/end-of-column ()
+  (interactive)
+  (let ((goal-column (or goal-column (current-column))))
+    (forward-paragraph)
+    (beginning-of-line)
+    (if (looking-at-p paragraph-separate)
+        (previous-line)
+      (move-to-column goal-column))))
+
+(defun nispio/beginning-of-column ()
+  (interactive)
+  (let ((goal-column (or goal-column (current-column))))
+    (backward-paragraph)
+    (if (looking-at-p paragraph-separate)
+        (next-line)
+      (move-to-column goal-column))))
+
+(declare-function #'mc/edit-lines "mc-edit-lines")
+(defun nispio/mark-this-column (&optional arg)
+  (interactive "P")
+  (let ((goal-column (or goal-column (current-column))))
+    (if arg (nispio/beginning-of-column))
+    (push-mark nil nil t)
+    (nispio/end-of-column)
+    (if (functionp #'mc/edit-lines) (mc/edit-lines))))
+
+(defun nispio/sort-this-column (&optional arg)
+  (interactive "P")
+  (let ((goal-column (or goal-column (current-column)))
+        (sort-fold-case t))
+    (push-mark nil nil t)
+    (nispio/end-of-column)
+    (end-of-line)
+    (sort-columns arg (mark) (point))
+    (move-to-column goal-column)))
 
 
 

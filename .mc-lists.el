@@ -55,6 +55,8 @@
         matlab-electric-comment
         matlab-forward-sexp
         matlab-linefeed
+        nispio/beginning-of-column
+        nispio/end-of-column
         nispio/eval-and-replace
         nispio/stop-debugging
         nispio/strip-1
@@ -122,11 +124,13 @@
         isearch-printing-char
         make-default
         mc/toggle-cursor-on-click
+        mc/vertical-align-with-space
         mouse-save-then-kill
         mouse-set-region
         multiple-cursors-mode
         next-multiframe-window
         nispio/compile-c
+        nispio/mark-this-column
         nispio/mc-many-cursors
         nispio/other-window
         org-agenda
