@@ -146,7 +146,7 @@
   ;; (add-hook 'prog-mode-hook 'my-prog-mode-keys)
 
   ;; Install updated org-mode from ELPA
-  (use-package org :ensure t)
+  (use-package org-plus-contrib :ensure t)
 
   ;; Use unix line endings by default
   (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -371,6 +371,9 @@
 
     (use-package helm-ag :ensure t)
     (require 'nispio/helm-ag-extra)
+    ;; Smarter way to find project root
+    (nispio/setup-helm-ag-project-root)
+    ;; Ability to freeze a helm-do-ag query and continue narrowing
     (nispio/setup-helm-ag-narrow)
 
     (require 'nispio/helm-silver)

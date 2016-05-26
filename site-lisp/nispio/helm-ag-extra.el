@@ -40,7 +40,34 @@
     :candidate-number-limit 9999
     :follow (and helm-follow-mode-persistent 1)))
 
+;; TODO: write a better docstring for this
+(defvar nispio/ag-project-root-alist
+  '(".agignore" ".projectile" ".git/" ".hg/"
+    (".svn/" .  nispio/nested-vcs-root))
+  "Alist of ways to search for project roots")
+
+(defun nispio/nested-vcs-root (dir name)
+  (setq dir (abbreviate-file-name dir))
+q  (let* ((vcs (expand-file-name name dir))
+        root)
+    (while (file-exists-p vcs)
+      (setq root dir)
+      (setq dir (file-name-directory (directory-file-name dir)))
+      (setq vcs (and dir (expand-file-name name dir))))
+    root))
+
+(defun nispio/ad-override-helm-ag--project-root (&rest args)
+  "Provide a configurable alist of ways to search for project root"
+  (cl-loop for item in nispio/ag-project-root-alist
+           when (let ((name (or (car-safe item) item))
+                      (func (or (cdr-safe item) #'locate-dominating-file)))
+                  (apply func (list default-directory name)))
+           return it))
+
 ;;;###autoload
+(defun nispio/setup-helm-ag-project-root ()
+  (advice-add 'helm-ag--project-root :override #'nispio/ad-override-helm-ag--project-root))
+
 (defun nispio/ad-around-helm-do-ag (orig-fun &rest args)
   (let ((action-alist-ref (assoc 'action helm-source-do-ag)))
     (cl-letf (((cdr action-alist-ref) nispio/helm-do-ag--actions))
