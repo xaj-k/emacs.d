@@ -48,7 +48,7 @@
 
 (defun nispio/nested-vcs-root (dir name)
   (setq dir (abbreviate-file-name dir))
-q  (let* ((vcs (expand-file-name name dir))
+  (let* ((vcs (expand-file-name name dir))
         root)
     (while (file-exists-p vcs)
       (setq root dir)
