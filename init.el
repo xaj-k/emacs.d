@@ -59,6 +59,10 @@
 ;; Add greek characters to "C-x 8" map
 (require 'nispio/unicode)
 
+;; Add convenience function for printing a buffer to PS/PDF
+(require 'nispio/print)
+(define-key my-map (kbd "<S-print>") 'nispio/ps-print-buffer)
+
 ;; This is a hack because my M-s keybinding disappear in some modes
 (define-key my-map (kbd "M-s") (lookup-key global-map (kbd "M-s")))
 
