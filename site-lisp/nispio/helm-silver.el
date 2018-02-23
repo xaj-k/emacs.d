@@ -1,6 +1,10 @@
 
 (require 'helm-ag)
 
+(defcustom helm-silver-case-sensitive nil
+  "Make `helm-silver' queries case-sensitive (the default is smart-case)"
+  :type 'boolean)
+
 (defun helm-silver--candidate-process (&rest args)
   (cl-letf (((symbol-function 'helm-ag--construct-do-ag-command)
              'helm-silver--construct-command))
@@ -15,11 +19,13 @@
             query (helm-ag--elisp-regexp-to-pcre query)))
     (if (not (string= query ""))
         (append (car helm-do-ag--commands)
+                (list (if helm-silver-case-sensitive "-s" "-S"))
                 (list "-G" (helm-ag--join-patterns file))
                 (list "--" (helm-ag--join-patterns query))
                 (cdr helm-do-ag--commands))
       (unless (string= file "")
         (append (car helm-do-ag--commands)
+                (list (if helm-silver-case-sensitive "-s" "-S"))
                 (list "-g" (helm-ag--join-patterns file))
                 (cdr helm-do-ag--commands))))))
 
@@ -47,7 +53,7 @@
             (mapconcat 'identity (reverse (or query '(""))) " ")))))
 
 (defun helm-silver--find-file-action (candidate find-func this-file &optional persistent)
-  (when helm-ag--command-feature
+  (when (memq 'pt helm-ag--command-features)
     ;; 'pt' always show filename if matched file is only one.
     (setq this-file nil))
   (let* ((file-line (or (helm-grep-split-line candidate)
@@ -97,6 +103,7 @@
     :follow (and helm-follow-mode-persistent 1)))
 
 (defun helm-silver--helm ()
+  (message "%s" helm-do-ag--commands)
   (let ((search-dir (if (not (helm-ag--windows-p))
                         helm-ag--default-directory
                       (if (helm-do-ag--target-one-directory-p helm-ag--default-target)
@@ -121,12 +128,15 @@
     (insert "@")
     (backward-char))))
 (define-key helm-ag-map (kbd "C-f") #'helm-silver-magic-forward-char)
+(define-key helm-ag-mode-map (kbd "C-f") #'helm-silver-magic-forward-char)
+(define-key helm-do-ag-map (kbd "C-f") #'helm-silver-magic-forward-char)
 
 
 ;;;###autoload
 (defun helm-silver (&rest args)
   (interactive)
-  (cl-letf (((symbol-function 'helm-do-ag--helm) 'helm-silver--helm))
+  (cl-letf (((symbol-function 'helm-do-ag--helm) 'helm-silver--helm)
+            (helm-ag-base-command (concat helm-ag-base-command (if args " -a" ""))))
     (apply 'helm-do-ag args)))
 
 ;;;###autoload

@@ -66,8 +66,8 @@ the version specified, even if a newer version is available."
 	(setq repository-list (or repository-list
                               '("http://orgmode.org/elpa/"
                                 "http://melpa.org/packages/"
-								"http://elpa.gnu.org/packages/"
-								"file:///home/jph/.emacs.d/local-elpa-misc/")))
+                                "http://elpa.gnu.org/packages/"
+                                "file:///home/jph/.emacs.d/local-elpa-misc/")))
 	(dolist (url repository-list)
 	  (dolist (package (cdr (nispio/get-archive-contents url)))
 		(let* ((name (car package))
