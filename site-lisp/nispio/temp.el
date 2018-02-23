@@ -956,3 +956,72 @@ in the appropriate direction to include current line."
 
 (define-key my-map (kbd "M-l") 'nispio/current-line)
 
+
+
+(defun mc/split-region (arg beg end)
+  "Split the current region into sub-regions at each occurrence of a given string"
+  (interactive "p\nr")
+  (let ((search (read-string "Split region on string: "))
+        (inc (cond
+              ((< 1 arg) 'after)
+              ((> 0 arg) 'before)
+              (t nil))))
+    (mc--do-split-region (regexp-quote search) beg end inc)))
+
+(defun mc/split-region-regexp (arg beg end)
+  "Split the current region into sub-regions at each occurrence of a given regexp"
+  (interactive "p\nr")
+  (let ((regexp (read-regexp "Split region on regexp: "))
+        (inc (cond
+              ((< 1 arg) 'after)
+              ((> 0 arg) 'before)
+              (t nil))))
+    (mc--do-split-region regexp beg end inc)))
+
+(defun mc--do-split-region (regexp beg end &optional include-match)
+  (if (string= regexp "")
+      (message "Mark aborted")
+    (let ((lastmatch beg)
+          (case-fold-search nil))
+      (mc/remove-fake-cursors)
+      (deactivate-mark)
+      (goto-char beg)
+      (while (and (< (point) end) ; can happen because of (forward-char)
+                  (search-forward-regexp regexp end t))
+        (if (eq include-match 'after)
+            (goto-char (match-end 0))
+          (goto-char (match-beginning 0)))
+        (push-mark lastmatch t nil)
+        (mc/create-fake-cursor-at-point)
+        (if (eq include-match 'before)
+            (goto-char (match-beginning 0))
+          (goto-char (match-end 0)))
+        (setq lastmatch (point))
+        (goto-char (match-end 0))
+        (when (= (point) (match-beginning 0))
+          (forward-char)))
+      (if (not lastmatch)
+          (multiple-cursors-mode 0)
+        (goto-char end)
+        (push-mark lastmatch t nil)
+        (multiple-cursors-mode 1)))))
+
+foo--bar--baz--quux
+(let ((arg (prefix-numeric-value nil)))
+(cond
+ ((< 1 arg) 'after)
+ ((> 0 arg) 'before)
+ (t nil)))
+
+
+
+;; Source: http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html
+(defun nispio/fill-or-unfill ()
+  "Like `fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'nispio/fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'fill-paragraph)))

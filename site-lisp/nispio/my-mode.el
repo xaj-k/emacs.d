@@ -49,13 +49,13 @@
   (define-key input-decode-map [?\C-m] [C-m])
   (define-key input-decode-map [?\C-i] [C-i])
   (define-key input-decode-map [?\C-\[] [C-\[])
-  (define-key local-function-key-map [C-m] [?\C-m])
-  (define-key local-function-key-map [C-i] [?\C-i])
-  (define-key local-function-key-map [C-\[] [?\C-\[])
+  (define-key function-key-map [C-m] [?\C-m])
+  (define-key function-key-map [C-i] [?\C-i])
+  (define-key function-key-map [C-\[] [?\C-\[])
   (setq tty-keys nil))
 
 ;; Turn C-] into a sticky "hyper" modifier
-(define-key local-function-key-map [?\C-\]] 'event-apply-hyper-modifier)
+(define-key function-key-map [?\C-\]] 'event-apply-hyper-modifier)
 (define-key global-map [?\C-\]] nil)
 
 ;; Set up basic keybindings

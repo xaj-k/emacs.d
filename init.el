@@ -1,18 +1,19 @@
 ;;;; .emacs
 
-;; Configure UI features
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode 0))  ; Disable scroll bars
-(when (fboundp 'fringe-mode) (fringe-mode '(nil . 0))) ; Left fringes only
-(when (fboundp 'tool-bar-mode) (tool-bar-mode 0))      ; Disable toolbar
+;(package-initialize)
 
 ;; White text on black background
-(set-background-color "black")
-(set-foreground-color "white smoke")
+(setq default-frame-alist
+      '((background-color . "black")
+        (foreground-color . "white smoke")
+        (cursor-color . "orchid")
+        (font . "DejaVu Sans Mono-12")))
 
-(message "Welcome to Emacs!\nThis session brought to you by:\n%s"
-         (mapconcat 'identity command-line-args " "))
-
-(message "Loading init file...")
+;; Configure UI features
+(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)) ; Disable scroll bars
+(when (fboundp 'fringe-mode) (fringe-mode '(nil . 0))) ; Left fringes only
+(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))     ; Disable toolbar
+(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))     ; Disable menu bar
 
 ;; My "must-have" key bindings get set before anything can go wrong.
 (global-set-key (kbd "<C-tab>") 'next-multiframe-window)
@@ -22,13 +23,17 @@
 ;; Set load paths for lisp files
 (setq site-lisp (concat user-emacs-directory "site-lisp/"))
 (add-to-list 'load-path site-lisp)
+;; (setq emacs-wiki (concat site-lisp "emacs-wiki"))
+;; (add-to-list 'load-path site-lisp emacs-wiki)
 
 ;; Settings modified via the Customize interface get their own file.  We set
 ;; this right up front in case any of the other init functions use the customize
 ;; interface.
-(if (display-graphic-p)
-    (setq custom-file (concat user-emacs-directory "settings.el"))
-  (setq custom-file (concat user-emacs-directory "settings-tty.el")))
+(setq tty-settings-p (member "--tty-settings" command-line-args))
+(setq command-line-args (delete "--tty-settings" command-line-args))
+(if tty-settings-p
+    (setq custom-file (concat user-emacs-directory "settings-tty.el"))
+  (setq custom-file (concat user-emacs-directory "settings.el")))
 
 (require 'nispio/misc-utils)
 (setq load-path
@@ -58,6 +63,10 @@
 
 ;; Add greek characters to "C-x 8" map
 (require 'nispio/unicode)
+
+;; Add utilities for easy printing
+(require 'nispio/print)
+(define-key my-map (kbd "<print>") 'nispio/ps-print-buffer)
 
 ;; This is a hack because my M-s keybinding disappear in some modes
 (define-key my-map (kbd "M-s") (lookup-key global-map (kbd "M-s")))
@@ -146,7 +155,7 @@
   ;; (add-hook 'prog-mode-hook 'my-prog-mode-keys)
 
   ;; Install updated org-mode from ELPA
-  (use-package org :ensure t)
+  (use-package org :ensure org-plus-contrib)
 
   ;; Use unix line endings by default
   (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -157,7 +166,7 @@
   (define-key dired-mode-map (kbd "F") 'nispio/find-marked-files)
   (define-key dired-mode-map (kbd "W") 'nispio/dired-copy-filename)
 
-  ;; ;; Extend dired functionality
+  ;; Extend dired functionality
   (use-package dired+ :ensure t)
 
   (nispio/after 'dired+
@@ -217,6 +226,7 @@
   (customize-set-value 'phi-search-case-sensitive 'guess)
   (define-key my-map (kbd "C-s") 'phi-search)
   (define-key my-map (kbd "C-r") 'phi-search-backward)
+  (define-key my-map (kbd "H-C-s") 'isearch-forward)
 
   ;; Complete phi-search with the match selected
   (defun phi-search-complete-with-selection ()
@@ -284,7 +294,7 @@
 
   ;; Add support for editing matlab files
   ;; (source: http://matlab-emacs.cvs.sourceforge.net/viewvc/matlab-emacs/matlab-emacs/?view=tar)
-  (use-package "matlab-load" :ensure matlab-mode)
+  (use-package "matlab" :ensure matlab-mode)
   (require 'nispio/matlab-debug)
   (setq matlab-comment-column 50)
   (add-hook 'matlab-mode-hook 'linum-mode)
@@ -292,7 +302,7 @@
   (when (>= emacs-major-version 24)
     (matlab-cedet-setup))
 
-  ;; Enable column markers at column 81 to warn of long lines
+  ;; Enable column markers at column 91 to warn of long lines
   ;; (source: http://www.emacswiki.org/emacs/download/column-marker.el)
   (use-package column-marker :ensure t)
   (defvar-local nispio/column-marker-column 91
@@ -302,6 +312,9 @@
     (interactive)
     (column-marker-1 (or col nispio/column-marker-column)))
   (add-hook 'prog-mode-hook 'nispio/column-marker)
+
+  (use-package treemacs :ensure t)
+  (use-package ace-window :ensure t)
 
   (use-package tex-site :ensure auctex)
   (nispio/after 'tex-site
@@ -342,7 +355,8 @@
 
 
 ;; Load packages that are only compatible with Emacs 24.3+
-(when (and (= emacs-major-version 24) (>= emacs-minor-version 3))
+(when (or (> emacs-major-version 24)
+          (and (= emacs-major-version 24) (>= emacs-minor-version 3)))
   (with-demoted-errors "INIT ERROR: %s"
     (electric-pair-mode 1) ; Enable automatic bracket closing
 
@@ -372,6 +386,8 @@
     (use-package helm-ag :ensure t)
     (require 'nispio/helm-ag-extra)
     (nispio/setup-helm-ag-narrow)
+    (define-key my-map (kbd "M-s A") 'helm-do-ag)
+    (define-key my-map (kbd "M-s a") 'helm-do-ag-project-root)
 
     (require 'nispio/helm-silver)
     (define-key my-map (kbd "M-s A") 'helm-silver)
@@ -434,7 +450,9 @@ for project root directories.")
     (use-package helm-gtags :ensure t)
     (add-hook 'c-mode-common-hook 'helm-gtags-mode)
     (define-key my-map (kbd "M-.") 'helm-gtags-dwim)
-    
+    (define-key my-map (kbd "M-,") 'helm-gtags-pop-stack)
+    (define-key my-map (kbd "C-M-.") 'helm-gtags-select)
+
     ;; Emacs frontend to GNU Global source code tagging system.
     ;; SOURCE: https://github.com/leoliu/ggtags
     (use-package ggtags :ensure t)
@@ -533,7 +551,7 @@ for project root directories.")
     (ws-butler-global-mode)
 
     ;; Use ido for completing-read
-    (use-package ido-ubiquitous :ensure t)
+    (use-package ido-completing-read+ :ensure t)
     (ido-ubiquitous-mode)
 
     (use-package which-key :ensure t :diminish "")
@@ -582,11 +600,17 @@ for project root directories.")
 (add-hook 'org-mode-hook 'nispio/org-mode-setup)
 
 ;; Make hide-show mode available, turn it on it a buffer with C-c @
+(defun nispio/hs-toggle-hiding ()
+  (interactive)
+  (if (bound-and-true-p hs-minor-mode)
+      (call-interactively #'hs-toggle-hiding)
+    (if (hs-minor-mode) (message "%s" "Hs minor mode enabled in current buffer"))))
+
 (autoload 'hs-minor-mode "hideshow")
 (global-set-key (kbd "C-c @") 'hs-minor-mode)
 (defvar nispio/hs-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-2") 'hs-toggle-hiding)
+    (define-key map (kbd "C-2") 'nispio/hs-toggle-hiding)
     (define-key map (kbd "C-c") 'hs-toggle-hiding)
     (define-key map (kbd "C-h") 'hs-hide-block)
     (define-key map (kbd "C-l") 'hs-hide-level)

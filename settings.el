@@ -17,7 +17,6 @@
    (global-mode-string global-mode-string)
    mode-line-end-spaces))
 
-(set-face-attribute 'default nil :font "DejaVu Sans Mono-11.5")
 (load-theme 'nispio-dark t)
 
 (custom-set-variables
@@ -29,10 +28,14 @@
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(aw-dispatch-always t)
+ '(aw-keys (quote (106 102 104 103 107 100 108 115 97 59)))
  '(browse-url-generic-program "firefox")
  '(custom-safe-themes
    (quote
     ("efe9aa1a078bf00a43342a1fc8b16505d444f8068285f5f83c6275cadcc44b7d" default)))
+ '(dired-listing-switches "-Alh --group-directories-first")
+ '(dired-omit-files "^\\.\\|^\\.?#\\|.*~")
  '(diredp-hide-details-initially-flag nil)
  '(eshell-scroll-to-bottom-on-output (quote all))
  '(fci-rule-color "#14151E" t)
@@ -41,6 +44,8 @@
  '(helm-ag-fuzzy-match t)
  '(helm-el-package-initial-filter (quote all))
  '(indent-tabs-mode nil)
+ '(mc/cycle-looping-behaviour (quote continue))
+ '(mc/edit-lines-empty-lines (quote ignore))
  '(mc/mode-line
    (quote
     (" mc:" :eval
@@ -92,7 +97,7 @@
      ("J" "Journal (free writing)" entry
       (file+datetree "~/.org/freejourn.org")
       "* %?"))) t)
- '(org-completion-use-ido t)
+ '(org-completion-use-ido t t)
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-export-with-LaTeX-fragments t t)
@@ -116,9 +121,14 @@
  '(org-todo-keywords
    (quote
     ((sequence "TODO(t!)" "STARTED(s!)" "WAIT(w@/!)" "ASK(a)" "|" "ANSWERED(A@)" "CANCELLED(x@)" "DONE(d)" "COMPLETE(c!)"))))
+ '(package-selected-packages
+   (quote
+    (treemacs-projectile ido-completing-read-plus ido-completing-read+ treemacs ace-jump-buffer ace-mc ace-window gnugo zygospore ws-butler which-key vlf visual-regexp-steroids use-package undo-tree smex sh-extra-font-lock phi-search-mc phi-rectangle page-break-lines org-plus-contrib move-text matlab-mode lorem-ipsum ido-ubiquitous helm-swoop helm-projectile helm-gtags helm-descbinds helm-ag ggtags flx-ido elscreen dired+ column-marker buffer-move avy-zap auctex ace-link ac-helm ac-c-headers)))
  '(safe-local-variable-values
    (quote
-    ((xmidas-macro-mode . t)
+    ((TeX-master . "report")
+     (TeX-master . t)
+     (xmidas-macro-mode . t)
      (eval add-hook
            (quote after-save-hook)
            (lambda nil
