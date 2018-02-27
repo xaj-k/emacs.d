@@ -56,11 +56,11 @@
  '(mouse-autoselect-window t)
  '(org-agenda-files "~/.org/agendas.ini")
  '(org-agenda-ndays 10 t)
- '(org-agenda-restore-windows-after-quit t t)
- '(org-agenda-skip-deadline-if-done nil t)
- '(org-agenda-skip-scheduled-if-done nil t)
- '(org-agenda-start-on-weekday nil t)
- '(org-agenda-todo-ignore-scheduled t t)
+ '(org-agenda-restore-windows-after-quit t)
+ '(org-agenda-skip-deadline-if-done nil)
+ '(org-agenda-skip-scheduled-if-done nil)
+ '(org-agenda-start-on-weekday nil)
+ '(org-agenda-todo-ignore-scheduled t)
  '(org-blank-before-new-entry (quote ((heading . t) (plain-list-item))))
  '(org-capture-templates
    (quote
@@ -96,7 +96,7 @@
       "* %?")
      ("J" "Journal (free writing)" entry
       (file+datetree "~/.org/freejourn.org")
-      "* %?"))) t)
+      "* %?"))))
  '(org-completion-use-ido t t)
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
@@ -124,6 +124,13 @@
  '(package-selected-packages
    (quote
     (treemacs-projectile ido-completing-read-plus ido-completing-read+ treemacs ace-jump-buffer ace-mc ace-window gnugo zygospore ws-butler which-key vlf visual-regexp-steroids use-package undo-tree smex sh-extra-font-lock phi-search-mc phi-rectangle page-break-lines org-plus-contrib move-text matlab-mode lorem-ipsum ido-ubiquitous helm-swoop helm-projectile helm-gtags helm-descbinds helm-ag ggtags flx-ido elscreen dired+ column-marker buffer-move avy-zap auctex ace-link ac-helm ac-c-headers)))
+ '(ps-bottom-margin 40)
+ '(ps-font-size 9.5)
+ '(ps-header-lines 1)
+ '(ps-header-offset 20)
+ '(ps-left-margin 40)
+ '(ps-right-margin 20)
+ '(ps-top-margin 20)
  '(safe-local-variable-values
    (quote
     ((TeX-master . "report")
