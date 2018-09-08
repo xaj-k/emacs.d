@@ -415,20 +415,21 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 
 
-;; Python code checking via flymake and pylint
-(setq nispio/pylint-name "epylint.py")
-(when (load "flymake" t)
-  (defun nispio/flymake-python-init ()
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                       'flymake-create-temp-inplace))
-           (local-file (file-relative-name
-                        temp-file
-                        (file-name-directory buffer-file-name))))
-      (list nispio/pylint-name (list local-file))))
-  (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.py\\'" nispio/flymake-python-init)))
+;; ;; Python code checking via flymake and pylint
+;; ;; FIXME: make this work again
+;; (setq nispio/pylint-name "epylint.py")
+;; (when (load "flymake" t)
+;;   (defun nispio/flymake-python-init ()
+;;     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                        'flymake-create-temp-inplace))
+;;            (local-file (file-relative-name
+;;                         temp-file
+;;                         (file-name-directory buffer-file-name))))
+;;       (list nispio/pylint-name (list local-file))))
+;;   (add-to-list 'flymake-allowed-file-name-masks
+;;                '("\\.py\\'" nispio/flymake-python-init)))
 
-(add-hook 'python-mode-hook 'flymake-mode-on)
+; (add-hook 'python-mode-hook 'flymake-mode-on)
 
 (defun nispio/set-python-keys ()
   (local-set-key [remap fill-paragraph] 'python-fill-paragraph))

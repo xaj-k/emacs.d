@@ -54,58 +54,72 @@
         (face mc/cursor-face))
       (mc/num-cursors)))))
  '(mouse-autoselect-window t)
- '(org-agenda-files "~/.org/agendas.ini")
+ '(org-agenda-clockreport-parameter-plist (quote (:link t :maxlevel 2 :fileskip0 t)))
+ '(org-agenda-dim-blocked-tasks t)
+ '(org-agenda-files "~/org/agenda.ini")
  '(org-agenda-ndays 10 t)
  '(org-agenda-restore-windows-after-quit t)
+ '(org-agenda-show-future-repeats (quote next))
  '(org-agenda-skip-deadline-if-done nil)
  '(org-agenda-skip-scheduled-if-done nil)
+ '(org-agenda-span 10)
  '(org-agenda-start-on-weekday nil)
+ '(org-agenda-time-grid
+   (quote
+    ((daily today require-timed)
+     (800 1000 1200 1400 1600 1800)
+     "......" "----------------")))
  '(org-agenda-todo-ignore-scheduled t)
+ '(org-agenda-todo-ignore-with-date t)
  '(org-blank-before-new-entry (quote ((heading . t) (plain-list-item))))
  '(org-capture-templates
    (quote
     (("t" "Todo" entry
-      (file+headline "~/.org/tasks.org" "Unfiled Tasks")
+      (file+headline "tasks.org" "Unfiled Tasks")
       "* TODO %i%?
   - State \"TODO\"       from \"\"           %U")
      ("T" "Todo (from file)" entry
-      (file+headline "~/.org/tasks.org" "Unfiled Tasks")
+      (file+headline "tasks.org" "Unfiled Tasks")
       (function nispio/linked-todo)
       :immediate-finish t)
      ("d" "Distraction" entry
-      (file+headline "~/.org/distractions.org" "Distractions")
+      (file+headline "distractions.org" "Distractions")
       "* %?
   - Added: %U")
      ("D" "Distraction (as TODO)" entry
-      (file+headline "~/.org/distractions.org" "Tasks")
+      (file+headline "distractions.org" "Tasks")
       "* TODO %?
   - Added: %U")
      ("n" "Notes" entry
-      (file+headline "~/.org/notes.org" "Notes")
+      (file+headline "notes.org" "Notes")
       "* %i%?
   - Added: %U")
      ("N" "Notes (from file)" entry
-      (file+headline "~/.org/notes.org" "Notes")
+      (file+headline "notes.org" "Notes")
       (function nispio/linked-note))
      ("p" "Pomodoros" entry
-      (file+datetree "~/.org/pomodoros.org")
+      (file+datetree "pomodoros.org")
       "* TODO %i%?
   - State \"TODO\"       from \"\"           %U" :jump-to-captured t)
      ("j" "Journal" entry
-      (file+datetree "~/.org/journal.org")
+      (file+datetree "journal.org")
       "* %?")
      ("J" "Journal (free writing)" entry
-      (file+datetree "~/.org/freejourn.org")
+      (file+datetree "freejourn.org")
       "* %?"))))
  '(org-completion-use-ido t t)
+ '(org-directory "~/org")
+ '(org-duration-format (quote (("h") (special . 2))))
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-export-with-LaTeX-fragments t t)
  '(org-fast-tag-selection-single-key (quote expert))
+ '(org-goto-auto-isearch nil)
  '(org-hide-leading-stars t)
  '(org-link-search-must-match-exact-headline nil)
+ '(org-log-repeat nil)
  '(org-outline-path-complete-in-steps nil)
- '(org-refile-targets (quote ((org-agenda-files :level . 1))))
+ '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
  '(org-return-follows-link t)
  '(org-special-ctrl-a/e t)
  '(org-startup-folded t)

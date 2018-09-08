@@ -1,3 +1,4 @@
+;; -*- tab-width: 4 -*- ;;
 (require 'org)
 
 ;; When visiting an Org file, in what folding state do I first want to see it?
@@ -34,9 +35,7 @@
                            "TODO(t!)"
                            "STARTED(s!)"
                            "WAIT(w@/!)"
-                           "ASK(a)"
                            "|"
-                           "ANSWERED(A@)"
                            "CANCELLED(x@)"
                            "DONE(d)"
                            "COMPLETE(c!)")))
@@ -51,54 +50,55 @@
 ;; ;; Which tags should be available? Note that tags besides the configured ones
 ;; ;; can be used, but for the important ones you can define keys for fast access
 ;; ;; here.
-(customize-set-variable 'org-tag-alist '(("CODE" . ?c)
-                      ("PLAN" . ?p)
-                      ("EXPERIMENT" . ?e)
-                      ("LEARN" . ?l)
-                      ("DOCUMENT" . ?d)
-                      ("TEACH" . ?t)))
+;; (customize-set-variable 'org-tag-alist
+;;                         '(("CODE" . ?c)
+;;                           ("PLAN" . ?p)
+;;                           ("EXPERIMENT" . ?e)
+;;                           ("LEARN" . ?l)
+;;                           ("DOCUMENT" . ?d)
+;;                           ("TEACH" . ?t)))
 
 ;; Make the tags interface even faster for changing a single tag.
 (customize-set-variable 'org-fast-tag-selection-single-key 'expert)
 
 ;; How should tags be aligned in the headline? If it is negative, it means that
 ;; the tags should be flushright to that column.
-(customize-set-variable 'org-tags-column -77)
+(customize-set-variable 'org-tags-column -90)
 
 ;; ;; When adding new entries (or tasks) to a list, do I want the entry to be first
 ;; ;; or last in the list?
 ;; ;; TODO: find out how this works
 ;; (customize-set-variable 'org-reverse-note-order t)
 
-;; ;; org-capture is great for fast capture of ideas, notes, and tasks. It is one
-;; ;; of the primary capture methods in Org-mode.
-;; ;; TODO: Find out about org-capture
-
 ;; ;; Prepare templates for the typical notes and tasks you want to capture
 ;; ;; quickly. I believe everyone using org-capture customizes this.
 ;; (customize-set-variable 'org-capture-templates t)
 (customize-set-variable 'org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/.org/tasks.org" "Unfiled Tasks")
+      '(("t" "Todo" entry (file+headline "tasks.org" "Unfiled Tasks")
 		     "* TODO %i%?\n  - State \"TODO\"       from \"\"           %U")
-		("T" "Todo (from file)" entry (file+headline "~/.org/tasks.org" "Unfiled Tasks")
+		("T" "Todo (from file)" entry (file+headline "tasks.org" "Unfiled Tasks")
 		     (function nispio/linked-todo)
 		     :immediate-finish t)
-		("d" "Distraction" entry (file+headline "~/.org/distractions.org" "Distractions")
+		("d" "Distraction" entry (file+headline "distractions.org" "Distractions")
 		     "* %?\n  - Added: %U")
-		("D" "Distraction (as TODO)" entry (file+headline "~/.org/distractions.org" "Tasks")
+		("D" "Distraction (as TODO)" entry (file+headline "distractions.org" "Tasks")
 		     "* TODO %?\n  - Added: %U")
-		("n" "Notes" entry (file+headline "~/.org/notes.org" "Notes")
+		("n" "Notes" entry (file+headline "notes.org" "Notes")
 		     "* %i%?\n  - Added: %U")
-		("N" "Notes (from file)" entry (file+headline "~/.org/notes.org" "Notes")
+		("N" "Notes (from file)" entry (file+headline "notes.org" "Notes")
 		     (function nispio/linked-note))
-		("p" "Pomodoros" entry (file+datetree "~/.org/pomodoros.org")
+		("s" "Scripture Notes" entry (file+headline "study.org" "Unfiled")
+		     "* %i%?\n  - Added: %U")
+		("S" "Scripture Notes (from file)" entry (file+headline "study.org" "Unfiled")
+		     (function nispio/linked-note))
+		("p" "Pomodoros" entry (file+datetree "pomodoros.org")
 		     "* TODO %i%?\n  - State \"TODO\"       from \"\"           %U"
 		     :jump-to-captured t)
-        ("j" "Journal" entry (file+datetree "~/.org/journal.org") "* %?")
-        ("J" "Journal (free writing)" entry (file+datetree "~/.org/freejourn.org") "* %?")))
+        ("j" "Journal" entry (file+datetree "journal.org") "* %?")
+        ("J" "Journal (free writing)" entry (file+datetree "freejourn.org") "* %?")))
 
 (defun nispio/linked-todo ()
-  "Return a template to be used for pomodoros"
+  "Return a template to be used for todo items with a link back to a file"
   (interactive)
   (let* ((buffer (org-capture-get :buffer))
 		 (file (buffer-file-name (or (buffer-base-buffer buffer) buffer)))
@@ -117,7 +117,7 @@
 			 filename))))
 
 (defun nispio/linked-note ()
-  "Return a template to be used for pomodoros"
+  "Return a template to be used for notes with a link back to a file"
   (interactive)
   (let* ((buffer (org-capture-get :buffer))
 		 (file (buffer-file-name (or (buffer-base-buffer buffer) buffer)))
@@ -151,11 +151,7 @@
 ;; ;; put captured notes.
 ;; (customize-set-variable 'org-default-notes-file t)
 
-;; Refiling means moving entries around, for example from a capturing location
-;; to the correct project.
-;; ;; TODO: learn about refiling
-
-;; ;; What should be on the menu when you refile tasks with C-c C-w? 
+;; ;; What should be on the menu when you refile tasks with C-c C-w?
 ;; (customize-set-variable 'org-refile-targets t)
 
 ;; ;; How would you like to select refile targets. Headline only, or the path along
@@ -207,7 +203,7 @@
 ;; ;; Don't show any tasks with a date in the global TODO list. 
 ;; (customize-set-variable 'org-agenda-todo-ignore-with-date t)
 
-;; ;; Don't show scheduled tasks in the global TODO list. 
+;; Don't show scheduled tasks in the global TODO list.
 (customize-set-variable 'org-agenda-todo-ignore-scheduled t)
 
 ;; Should LaTeX fragments be converted to inline images for HTML output? 

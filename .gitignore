@@ -5,3 +5,8 @@ semanticdb/*
 ac-comphist.dat
 ede-projects.el
 srecode-map.el
+.ido.last
+.org-id-locations
+bookmarks
+ido.last
+smex-items

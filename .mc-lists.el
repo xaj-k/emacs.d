@@ -8,34 +8,50 @@
         TeX-insert-sub-or-superscript
         abort-recursive-edit
         backward-sexp
+        backward-up-list
+        c-electric-brace
+        c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt
         c-electric-paren
+        c-electric-pound
         c-electric-semi&comma
         c-electric-star
         c-indent-line-or-region
         delete-indentation
         down-list
+        downcase-region
+        electric-pair-delete-pair
         end-of-visual-line
+        fill-paragraph
         forward-sentence
         forward-sexp
         indent-for-tab-command
+        kill-region
         mark-sexp
         nispio/strip-1
         org-beginning-of-line
+        org-ctrl-c-ctrl-c
         org-cycle
+        org-delete-char
         org-end-of-line
         org-insert-heading-respect-content
+        org-kill-line
         org-metaright
         org-open-line
+        org-self-insert-command
+        org-set-tags-command
         phi-rectangle-kill-region
         phi-rectangle-kill-ring-save
         phi-rectangle-yank
         phi-search
+        python-fill-paragraph
         python-nav-backward-up-list
+        python-nav-forward-block
         sgml-slash
         sh-assignment
         transpose-words
+        upcase-region
         ))
 
 (setq mc/cmds-to-run-once
@@ -46,13 +62,18 @@
         ace-mc-add-single-cursor
         ace-mc-do-keyboard-reset
         avy-goto-word-or-subword-1
+        count-words-region
         handle-select-window
         helm-M-x
         ignore
         mc/toggle-cursor-on-click
         mc/vertical-align-with-space
         menu-bar-open
+        mouse-drag-mode-line
+        mouse-save-then-kill
         multiple-cursors-mode
+        next-multiframe-window
         nispio/compile-c
         nispio/mc-many-cursors
+        org-todo
         ))

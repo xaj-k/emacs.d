@@ -29,12 +29,6 @@
   (setq-default my-mode nil)
   (message "my-global-mode disabled"))
 
-(global-set-key (kbd "<C-m>")
- (defun meta-return (&optional arg)
-
-   (interactive "p")
-   (execute-kbd-macro [M-return]) arg))
-
 (defun nispio/fake-M-RET ()
   "Simulating pressing M-RET"
   (interactive)
@@ -43,19 +37,69 @@
     (setq this-command command)
     (call-interactively command)))
 
-;; If not in a TTY, Unbind C-m, C-i, and C-[ so we can use them elsewhere
-(if (not (display-graphic-p))
-    (setq tty-keys t)
-  (define-key input-decode-map [?\C-m] [C-m])
-  (define-key input-decode-map [?\C-i] [C-i])
-  (define-key input-decode-map [?\C-\[] [C-\[])
-  (define-key function-key-map [C-m] [?\C-m])
-  (define-key function-key-map [C-i] [?\C-i])
-  (define-key function-key-map [C-\[] [?\C-\[])
-  (setq tty-keys nil))
+(defun nispio/press (key)
+  (interactive)
+  (let* ((local (local-key-binding key))
+         (global (global-key-binding key))
+         (command (or local global this-command)))
+    (unless (eq command this-command)
+      (setq last-command-event key)
+      (setq this-command command)
+      (call-interactively command))))
+
+(defun nispio/meta-up ()
+  (interactive)
+  (cond
+   ((eq major-mode 'org-mode)
+    (call-interactively #'org-metaup))
+   (t (nispio/press (kbd "<M-up>")))))
+
+(defun nispio/meta-down ()
+  (interactive)
+  (cond
+   ((eq major-mode 'org-mode)
+    (call-interactively #'org-metadown))
+   (t (nispio/press (kbd "<M-down>")))))
+
+(defun nispio/meta-return ()
+  (interactive)
+  (cond
+   ((eq major-mode 'org-mode)
+    (call-interactively #'org-meta-return))
+   (t (nispio/press [M-RET]))))
+
+;; ;; If not in a TTY, Unbind C-m, C-i, and C-[ so we can use them elsewhere
+;; (if (and nil (not (display-graphic-p)))
+;;     (setq tty-keys t)
+;;   (define-key input-decode-map [?\C-m] [C-m])
+;;   (define-key input-decode-map [?\C-i] [C-i])
+;;   (define-key input-decode-map [?\C-\[] [C-\[])
+;;   (define-key function-key-map [C-m] [?\C-m])
+;;   (define-key function-key-map [C-i] [?\C-i])
+;;   (define-key function-key-map [C-\[] [?\C-\[])
+;;   (setq tty-keys nil))
+
+(defun nispio/init-terminal-local-map (&optional frame)
+  (with-selected-frame frame
+    (when (display-graphic-p)
+      (define-key input-decode-map [?\C-m] [C-m])
+      (define-key input-decode-map [?\C-i] [C-i])
+      (define-key input-decode-map [?\C-\[] [C-\[])
+      (define-key function-key-map [C-m] [?\C-m])
+      (define-key function-key-map [C-i] [?\C-i])
+      (define-key function-key-map [C-\[] [?\C-\[])
+      (frame-terminal))))
+
+(nispio/init-terminal-local-map (window-frame))
+(add-hook 'after-make-frame-functions 'nispio/init-terminal-local-map)
+
+(defun nispio/apply-hyper-modifier (&optional prmpt)
+  "\\<function-key-map>Add the Hyper modifier to the following event.
+For example, type \\[event-apply-hyper-modifier] & to enter Hyper-&."
+  (vector (event-apply-modifier (read-event (or prmpt "H-")) 'hyper 24 "H-")))
 
 ;; Turn C-] into a sticky "hyper" modifier
-(define-key function-key-map [?\C-\]] 'event-apply-hyper-modifier)
+(define-key function-key-map [?\C-\]] 'nispio/apply-hyper-modifier)
 (define-key global-map [?\C-\]] nil)
 
 ;; Set up basic keybindings
@@ -69,11 +113,14 @@
 (define-key my-map (kbd "C-x <f1>") 'nispio/buffer-file-name)
 ;(define-key my-map (kbd "<f11>") 'nispio/toggle-fullscreen)
 (define-key my-map (kbd "C-j") 'newline-and-indent)
-;(define-key my-map (kbd "<C-m>") 'nispio/fake-M-RET)
 (define-key my-map [remap list-buffers] 'ibuffer)
 (define-key my-map (kbd "<menu>") 'menu-bar-open)
 (define-key my-map (kbd "C-H-]") 'abort-recursive-edit)
 (define-key my-map (kbd "H-e") 'nispio/eval-and-replace)
 (define-key my-map (kbd "C-h o") 'describe-face)
+(define-key my-map (kbd "<M-up>") 'nispio/meta-up)
+(define-key my-map (kbd "<M-down>") 'nispio/meta-down)
+(define-key my-map (kbd "<M-return>") 'nispio/meta-return)
+(define-key my-map (kbd "<C-m>") 'nispio/meta-return)
 
 (provide 'nispio/my-mode)

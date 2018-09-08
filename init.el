@@ -186,8 +186,8 @@
 
   ;; Move current line up and down with M-up and M-down
   (use-package move-text :ensure t)
-  (define-key my-map (kbd "<M-up>") 'move-text-up)
-  (define-key my-map (kbd "<M-down>") 'move-text-down)
+  (global-set-key (kbd "<M-up>") 'move-text-up)
+  (global-set-key (kbd "<M-down>") 'move-text-down)
 
   ;; Easily re-arrange buffers within the frame
   ;; (source: http://www.emacswiki.org/emacs/download/buffer-move.el)
@@ -569,6 +569,9 @@ for project root directories.")
 ;; Set up org mode.  This is postponed to make sure that we are working with the
 ;; latest version of org instead of the version included with emacs
 (require 'nispio/org-config)
+(define-key org-mode-map (kbd "M-n") #'org-next-visible-heading)
+(define-key org-mode-map (kbd "M-p") #'org-previous-visible-heading)
+
 (define-key my-map (kbd "C-c a") 'org-agenda)
 (define-key my-map (kbd "C-c l") 'org-store-link)
 (define-key my-map (kbd "C-'") 'org-capture)
@@ -599,6 +602,9 @@ for project root directories.")
 ;; Add some personal org-mode tweaks centered around editing org tables
 (autoload 'nispio/org-mode-setup "nispio/org-table-utils")
 (add-hook 'org-mode-hook 'nispio/org-mode-setup)
+
+;; Load custom function clocktable-by-tag when needed
+(autoload 'org-dblock-write:clocktable-by-tag "nispio/org-clocktable-extra")
 
 ;; Make hide-show mode available, turn it on it a buffer with C-c @
 (defun nispio/hs-toggle-hiding ()
