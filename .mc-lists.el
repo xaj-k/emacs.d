@@ -7,6 +7,8 @@
         TeX-insert-backslash
         TeX-insert-sub-or-superscript
         abort-recursive-edit
+        asm-colon
+        asm-comment
         backward-sexp
         backward-up-list
         c-electric-brace
@@ -16,8 +18,10 @@
         c-electric-paren
         c-electric-pound
         c-electric-semi&comma
+        c-electric-slash
         c-electric-star
         c-indent-line-or-region
+        comment-dwim
         delete-indentation
         down-list
         downcase-region
@@ -50,7 +54,9 @@
         python-nav-forward-block
         sgml-slash
         sh-assignment
+        transpose-sexps
         transpose-words
+        uncomment-region
         upcase-region
         ))
 
@@ -65,6 +71,7 @@
         count-words-region
         handle-select-window
         helm-M-x
+        ido-switch-buffer
         ignore
         mc/toggle-cursor-on-click
         mc/vertical-align-with-space

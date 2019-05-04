@@ -12,10 +12,13 @@
 	(package-refresh-contents)
 	(package-install 'use-package))
   (require 'use-package)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 
-  ;; Allow asynchronous processing in emacs
-  ;; (source: https://github.com/jwiegley/emacs-async)
-  (use-package async :ensure t))
+  (use-package async)
+  (use-package bind-key :commands (bind-key))
+  (use-package delight :commands (delight))
+  (use-package diminish :commands (diminish)))
 
 (defmacro nispio/require (name &rest ignored)
   "Simple macro which requires a package by name."

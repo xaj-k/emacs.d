@@ -68,7 +68,7 @@
 	  (setq str (replace-match "" nil nil str)))
 	str))
 
-(defun nispio/directory-subdirs (directory &optional reject)
+(defun nispio/directory-subdirs (directory &optional keep reject)
   "Returns a list of all subdirectories contained in DIRECTORY.
 Optional argument REJECT can specify a list of subdirectory names
 to ignore."
@@ -77,7 +77,7 @@ to ignore."
 		 (files (mapcar (lambda (el) (concat dir el)) ls))
 		 (reject (append reject '("." "..")))
 		 (prunes (mapcar (lambda (el) (concat dir el)) reject)))
-	(prune-directory-list files nil prunes)))
+	(prune-directory-list files keep prunes)))
 
 
 (defun nispio/set-window-size (window length &optional horizontal ignore)
@@ -118,7 +118,7 @@ For more information see `delete-window'.
 (defun nispio/menu-item-property (menu item property value)
   "Set VALUE of named PROPERTY in menu item ITEM from MENU"
   (let* ((map (assoc item (cdr menu)))
-		 (n (position property map)))
+		 (n (cl-position property map)))
 	(if (numberp n)
 		 (setf (elt map (+ 1 n)) value)
 	   (nconc map (list property value)))
@@ -376,6 +376,40 @@ to nil."
     (end-of-line)
     (sort-columns arg (mark) (point))
     (move-to-column goal-column)))
+
+
+
+;; Make ibuffer auto-update after changes
+;; (source: http://emacs.stackexchange.com/a/2179/93)
+(defun nispio/ibuffer-stale-p (&optional noconfirm)
+  (frame-or-buffer-changed-p 'ibuffer-auto-buffers-changed))
+(defun nispio/ibuffer-auto-revert-setup ()
+  (set (make-local-variable 'buffer-stale-function)
+       'nispio/ibuffer-stale-p)
+  (setq-local auto-revert-verbose nil)
+  (auto-revert-mode 1))
+
+
+
+;; Make sure forward-symbol and backward-symbol are defined
+(unless (fboundp 'forward-symbol) (require 'thingatpt))
+(defun backward-symbol () (interactive) (forward-symbol -1))
+
+
+
+;; Complete phi-search with the match selected
+(nispio/after 'phi-search
+  (defun phi-search-complete-with-selection ()
+    (interactive)
+    (let ((query (buffer-string)))
+      (phi-search-complete)
+      (mc/execute-command-for-all-cursors
+       (lambda ()
+         (interactive)
+         (when (looking-back query)
+           (push-mark (match-beginning 0) t t)
+           (goto-char (match-end 0))
+           (activate-mark)))))))
 
 
 

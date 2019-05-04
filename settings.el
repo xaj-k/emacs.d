@@ -36,7 +36,7 @@
     ("efe9aa1a078bf00a43342a1fc8b16505d444f8068285f5f83c6275cadcc44b7d" default)))
  '(dired-listing-switches "-Alh --group-directories-first")
  '(dired-omit-files "^\\.\\|^\\.?#\\|.*~")
- '(diredp-hide-details-initially-flag nil)
+ '(diredp-hide-details-initially-flag nil t)
  '(eshell-scroll-to-bottom-on-output (quote all))
  '(fci-rule-color "#14151E" t)
  '(focus-follows-mouse t)
@@ -58,18 +58,18 @@
  '(org-agenda-dim-blocked-tasks t)
  '(org-agenda-files "~/org/agenda.ini")
  '(org-agenda-ndays 10 t)
- '(org-agenda-restore-windows-after-quit t)
+ '(org-agenda-restore-windows-after-quit t t)
  '(org-agenda-show-future-repeats (quote next))
- '(org-agenda-skip-deadline-if-done nil)
- '(org-agenda-skip-scheduled-if-done nil)
+ '(org-agenda-skip-deadline-if-done nil t)
+ '(org-agenda-skip-scheduled-if-done nil t)
  '(org-agenda-span 10)
- '(org-agenda-start-on-weekday nil)
+ '(org-agenda-start-on-weekday nil t)
  '(org-agenda-time-grid
    (quote
     ((daily today require-timed)
      (800 1000 1200 1400 1600 1800)
      "......" "----------------")))
- '(org-agenda-todo-ignore-scheduled t)
+ '(org-agenda-todo-ignore-scheduled t t)
  '(org-agenda-todo-ignore-with-date t)
  '(org-blank-before-new-entry (quote ((heading . t) (plain-list-item))))
  '(org-capture-templates
@@ -106,7 +106,7 @@
       "* %?")
      ("J" "Journal (free writing)" entry
       (file+datetree "freejourn.org")
-      "* %?"))))
+      "* %?"))) t)
  '(org-completion-use-ido t t)
  '(org-directory "~/org")
  '(org-duration-format (quote (("h") (special . 2))))
@@ -137,7 +137,8 @@
     ((sequence "TODO(t!)" "STARTED(s!)" "WAIT(w@/!)" "ASK(a)" "|" "ANSWERED(A@)" "CANCELLED(x@)" "DONE(d)" "COMPLETE(c!)"))))
  '(package-selected-packages
    (quote
-    (treemacs-projectile ido-completing-read-plus ido-completing-read+ treemacs ace-jump-buffer ace-mc ace-window gnugo zygospore ws-butler which-key vlf visual-regexp-steroids use-package undo-tree smex sh-extra-font-lock phi-search-mc phi-rectangle page-break-lines org-plus-contrib move-text matlab-mode lorem-ipsum ido-ubiquitous helm-swoop helm-projectile helm-gtags helm-descbinds helm-ag ggtags flx-ido elscreen dired+ column-marker buffer-move avy-zap auctex ace-link ac-helm ac-c-headers)))
+    (yasnippet ein-mumamo ein delight diminish treemacs-icons-dired treemacs-magit swiper auto-yasnippet function-args popwin fill-column-indicator volatile-highlights clang-format ob-async ob-ipython ob-mongo org-clock-convenience org-clock-csv org-clock-split all-the-icons all-the-icons-dired anzu embrace expand-region highlight-indentation neotree powerline rainbow-delimiters cask cask-mode evil evil-leader magit-popup markdown-mode markdown-mode+ smartparens ac-clang ac-etags ac-html ac-html-angular ac-html-bootstrap ac-html-csswatcher ac-ispell ac-js2 ac-math ac-octave ac-php ac-php-core transient lv magit company-flx company-jedi company-math company-c-headers company-bibtex company-auctex company-anaconda company-irony company-irony-c-headers google-c-style flycheck-pos-tip flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer flymake-google-cpplint flymake-cppcheck flycheck-pycheckers flycheck ox-pandoc ox-rst treemacs-projectile ido-completing-read-plus ido-completing-read+ treemacs ace-jump-buffer ace-mc ace-window gnugo zygospore ws-butler which-key vlf visual-regexp-steroids use-package undo-tree smex sh-extra-font-lock phi-search-mc phi-rectangle page-break-lines org-plus-contrib move-text matlab-mode lorem-ipsum ido-ubiquitous helm-swoop helm-projectile helm-gtags helm-descbinds helm-ag ggtags flx-ido elscreen dired+ column-marker buffer-move avy-zap auctex ace-link ac-helm ac-c-headers)))
+ '(phi-search-case-sensitive (quote guess) t)
  '(ps-bottom-margin 40)
  '(ps-font-size 9.5)
  '(ps-header-lines 1)
@@ -185,4 +186,5 @@
  ;; If there is more than one, they won't work right.
  '(elscreen-tab-background-face ((t (:background "Gray20"))))
  '(elscreen-tab-current-screen-face ((t (:background "gray50" :foreground "white"))))
- '(elscreen-tab-other-screen-face ((t (:background "Gray30" :foreground "Gray50")))))
+ '(elscreen-tab-other-screen-face ((t (:background "Gray30" :foreground "Gray50"))))
+ '(hl-line ((t (:background "dim gray" :foreground "Old Lace")))))

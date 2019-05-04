@@ -1025,3 +1025,31 @@ foo--bar--baz--quux
                     (point-max))
            fill-column)))
     (call-interactively #'fill-paragraph)))
+
+
+
+;;;###autoload
+(defun use-package-normalize-keymaps (args package-name &optional override)
+  "Map over ARGS of the form ((_ . K) ...), autoloading keymap K's."
+  (mapcar #'(lambda (x)
+              (if (consp x)
+                  (cons (car x)
+                        `(lambda (&optional pfx-arg)
+                            (interactive)
+                            (use-package-autoload-keymap
+                             ',(cdr x)
+                             ',(use-package-as-symbol package-name)
+                             ,override)))
+                x))
+          args))
+
+;;;###autoload
+(defun use-package-handler/:bind-keymap
+    (name _keyword args rest state &optional override)
+  (use-package-concat
+   (use-package-process-keywords name rest state)
+   `(,@(mapcar
+        #'(lambda (xs)
+            `(,(if override 'bind-keys* 'bind-keys)
+              ,@(use-package-normalize-keymaps xs name override)))
+        (use-package-split-list-at-keys :break args)))))

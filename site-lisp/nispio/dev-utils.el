@@ -65,6 +65,24 @@
 ;;(setq gdb-many-windows t)
 (put 'debug-command 'safe-local-variable 'stringp)
 
+(setq-default hl-line-sticky-flag t)
+(add-hook 'gdb-disassembly-mode-hook #'hl-line-mode)
+
+(defadvice gdb-disassembly-handler-custom
+    (after nispio/ad-after-disas-handler-hl-line activate)
+  "Make sure that `hl-line' gets updated after updating disassembly buffer"
+  (let* ((buffer (gdb-get-buffer 'gdb-disassembly-buffer))
+         (window (get-buffer-window buffer 0)))
+    (when (and window (featurep 'hl-line))
+      (with-current-buffer buffer
+        (cond
+         (global-hl-line-mode
+          (goto-char gdb-disassembly-position)
+          (global-hl-line-highlight))
+         ((and hl-line-mode hl-line-sticky-flag)
+          (goto-char gdb-disassembly-position)
+          (hl-line-highlight)))))))
+
 ;; Call the compiler and save the compile command when in C
 (defun nispio/compile-c (&optional arg)
   (interactive "P")
@@ -237,7 +255,7 @@ If not in a source or disassembly buffer just set point."
 				 (up :vert-only t)
 				 (down :vert-only t))
 			   gud-tool-bar-map)
-	  (nispio/menu-item-property menu (car x) (cadr x) (caddr x)))
+	  (nispio/menu-item-property menu (car x) (cadr x) (cl-caddr x)))
 
 	;; Add Attach to Process button to GUD toolbar
 	(define-key-after menu [attach]
@@ -247,6 +265,13 @@ If not in a source or disassembly buffer just set point."
 				  :image (image :type xpm :file "attach.xpm")
 				  :vert-only t)
 	  'watch)
+
+	;; Add Disassembly button to GUD toolbar
+	(define-key-after menu [disas]
+	  '(menu-item "Show Disassembly" gdb-frame-disassembly-buffer
+				  :help "Show disassembly in a new frame"
+				  :image (image :type xpm :file "show.xpm")
+				  :vert-only t))
 
 	;; Add Stop Debugging button to GUD toolbar
 	(define-key-after menu [exit]
@@ -307,6 +332,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
         (set-window-dedicated-p window was-dedicated))
       t)))
 
+;;;###autoload
 (defvar nispio/gdb-window-map (make-sparse-keymap)
   "Keymap for selecting GDB windows")
 
@@ -406,12 +432,20 @@ Recognized window header names are: 'comint, 'locals, 'registers,
       (semantic-decoration-include-visit))
      (t (error "Could not find suitable jump point for %s" first)))))
 
-(define-key my-map (kbd "H-j") 'nispio/semantic-ia-fast-jump)
-
 
 
 (autoload 'doxymacs-mode "doxymacs")
 ;(add-hook 'c-mode-common-hook 'doxymacs-mode)
+
+
+
+(defun nispio/set-python-keys ()
+  (local-set-key [remap fill-paragraph] 'python-fill-paragraph))
+(add-hook 'python-mode-hook 'nispio/set-python-keys)
+
+
+
+(use-package flycheck :ensure t)
 
 
 
@@ -431,46 +465,41 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 ; (add-hook 'python-mode-hook 'flymake-mode-on)
 
-(defun nispio/set-python-keys ()
-  (local-set-key [remap fill-paragraph] 'python-fill-paragraph))
-(add-hook 'python-mode-hook 'nispio/set-python-keys)
+(with-eval-after-load "flymake"
+  ;; flymake rules for C++ header files
+  (defun nispio/flymake-header-init ()
+    (flymake-master-make-init
+     'flymake-get-include-dirs
+     '("\\.\\(?:c\\(?:c\\|pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'")
+     "[ \t]*#[ \t]*include[ \t]*\"\\([[:word:]0-9/\\_.]*%s\\)\""))
 
-
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.h\\(h\\|pp\\)?\\'"
+                 nispio/flymake-header-init
+                 flymake-master-cleanup))
 
-;; flymake rules for C++ header files
-(defun nispio/flymake-header-init ()
-  (flymake-master-make-init
-   'flymake-get-include-dirs
-   '("\\.\\(?:c\\(?:c\\|pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'")
-   "[ \t]*#[ \t]*include[ \t]*\"\\([[:word:]0-9/\\_.]*%s\\)\""))
-
-(add-to-list 'flymake-allowed-file-name-masks
-			 '("\\.h\\(h\\|pp\\)?\\'"
-			   nispio/flymake-header-init
-			   flymake-master-cleanup))
-
-(add-to-list 'flymake-allowed-file-name-masks
-			 '("\\.\\(?:c\\(?:c\\|pp\\|xx\\|\\+\\+\\)?\\)\\'"
-			   flymake-simple-make-init))
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.\\(?:c\\(?:c\\|pp\\|xx\\|\\+\\+\\)?\\)\\'"
+                 flymake-simple-make-init)))
 
 
 
 
-;; Add keybindings to jump between errors in flymake
-(defun nispio/add-flymake-keys ()
-  (local-set-key (kbd "M-n") 'flymake-goto-next-error)
-  (local-set-key (kbd "M-p") 'flymake-goto-prev-error))
-(add-hook 'flymake-mode-hook 'nispio/add-flymake-keys)
+(with-eval-after-load "flymake"
+  ;; Add keybindings to jump between errors in flymake
+  (defun nispio/add-flymake-keys ()
+    (local-set-key (kbd "M-n") 'flymake-goto-next-error)
+    (local-set-key (kbd "M-p") 'flymake-goto-prev-error))
+  (add-hook 'flymake-mode-hook 'nispio/add-flymake-keys)
 
-;; ;; Disable the window that 'pops' when flymake can't be enabled.
-(setq flymake-gui-warnings-enabled nil)
+  ;; ;; Disable the window that 'pops' when flymake can't be enabled.
+  (setq flymake-gui-warnings-enabled nil)
 
-;; ;; Activate flymake by default
-;; (add-hook 'find-file-hook 'flymake-mode-on)
+  ;; ;; Activate flymake by default
+  ;; (add-hook 'find-file-hook 'flymake-mode-on)
 
-;; Do logging of errors for flymake
-(setq flymake-log-level 0)
-
+  ;; Do logging of errors for flymake
+  (setq flymake-log-level 0))
 
 
 (provide 'nispio/dev-utils)

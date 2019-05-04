@@ -1,6 +1,7 @@
 
 (require 'iso-transl)
 
+;;;###autoload
 (defvar greek-small
   (let ((map (make-sparse-keymap)))
     (mapc (lambda (x) (define-key map (kbd (car x)) (cdr x)))
@@ -31,8 +32,8 @@
           ) map)
   "Keymap of lower-case greek letters.")
 (fset 'greek-small greek-small)
-(define-key 'iso-transl-ctl-x-8-map "g" 'greek-small)
 
+;;;###autoload
 (defvar greek-large
   (let ((map (make-sparse-keymap)))
     (mapc (lambda (x) (define-key map (kbd (car x)) (cdr x)))
@@ -63,6 +64,5 @@
           ) map)
   "Keymap of upper-case greek letters.")
 (fset 'greek-large greek-large)
-(define-key 'iso-transl-ctl-x-8-map "G" 'greek-large)
 
 (provide 'nispio/unicode)

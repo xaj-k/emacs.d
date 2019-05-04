@@ -30,10 +30,10 @@ be run during `helm-initialize' and should be added to the hook
 (defun nispio/helm-moccur-buffers ()
   "helm-multi-occur in all buffers backed by files."
   (interactive)
-  (helm-multi-occur
+  (helm-multi-occur-1
    (delq nil
 	 (mapcar (lambda (b)
-		   (when (buffer-file-name b) (buffer-name b)))
+		   (when (buffer-file-name b) b))
 		 (buffer-list)))))
 
 
