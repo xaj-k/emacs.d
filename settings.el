@@ -92,7 +92,7 @@
      ("J" "Journal (free writing)" entry
       (file+datetree "~/.org/freejourn.org")
       "* %?"))) t)
- '(org-completion-use-ido t)
+ '(org-completion-use-ido t t)
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-export-with-LaTeX-fragments t t)
@@ -116,6 +116,16 @@
  '(org-todo-keywords
    (quote
     ((sequence "TODO(t!)" "STARTED(s!)" "WAIT(w@/!)" "ASK(a)" "|" "ANSWERED(A@)" "CANCELLED(x@)" "DONE(d)" "COMPLETE(c!)"))))
+ '(package-selected-packages
+   (quote
+    (page-break-lines auctex column-marker matlab-mode phi-rectangle phi-search-mc multiple-cursors phi-search lorem-ipsum buffer-move move-text dired+ org-plus-contrib async use-package)))
+ '(ps-bottom-margin 40)
+ '(ps-font-size 9.5)
+ '(ps-header-lines 1)
+ '(ps-header-offset 20)
+ '(ps-left-margin 40)
+ '(ps-right-margin 20)
+ '(ps-top-margin 20)
  '(safe-local-variable-values
    (quote
     ((xmidas-macro-mode . t)

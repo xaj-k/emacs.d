@@ -1,6 +1,13 @@
 ;;;; .emacs
 
 ;; Configure UI features
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode 0))  ; Disable scroll bars
 (when (fboundp 'fringe-mode) (fringe-mode '(nil . 0))) ; Left fringes only
 (when (fboundp 'tool-bar-mode) (tool-bar-mode 0))      ; Disable toolbar
@@ -113,8 +120,6 @@
 ;; Workaround for an issue with isearch
 (define-key isearch-mode-map (kbd "<return>") 'isearch-exit)
 
-
-
 ;; Load init files as appropriate, turning errors into messages
 (with-demoted-errors "INIT ERROR: %s"
   ;; Simple minor modes
@@ -150,7 +155,7 @@
   ;; (add-hook 'prog-mode-hook 'my-prog-mode-keys)
 
   ;; Install updated org-mode from ELPA
-  (use-package org-plus-contrib :ensure t)
+  ;(use-package org-plus-contrib :ensure t)
 
   ;; Use unix line endings by default
   (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -162,13 +167,13 @@
   (define-key dired-mode-map (kbd "W") 'nispio/dired-copy-filename)
 
   ;; ;; Extend dired functionality
-  (use-package dired+ :ensure t)
+  ;(use-package dired+ :ensure t)
 
-  (nispio/after 'dired+
+  ;(nispio/after 'dired+
     ;; When opening a directory in dired, reuse the current buffer
-    (diredp-toggle-find-file-reuse-dir 1)
-    (define-key dired-mode-map [mouse-2] 'diredp-mouse-find-file)
-    (customize-set-variable 'diredp-hide-details-initially-flag nil))
+    ;(diredp-toggle-find-file-reuse-dir 1)
+    ;(define-key dired-mode-map [mouse-2] 'diredp-mouse-find-file)
+    ;(customize-set-variable 'diredp-hide-details-initially-flag nil))
 
   ;; Make ibuffer auto-update after changes
   ;; (source: http://emacs.stackexchange.com/a/2179/93)
@@ -288,24 +293,24 @@
 
   ;; Add support for editing matlab files
   ;; (source: http://matlab-emacs.cvs.sourceforge.net/viewvc/matlab-emacs/matlab-emacs/?view=tar)
-  (use-package "matlab-load" :ensure matlab-mode)
-  (require 'nispio/matlab-debug)
-  (setq matlab-comment-column 50)
-  (add-hook 'matlab-mode-hook 'linum-mode)
+  ;(use-package "matlab-load" :ensure matlab-mode)
+  ;(require 'nispio/matlab-debug)
+  ;(setq matlab-comment-column 50)
+  ;(add-hook 'matlab-mode-hook 'linum-mode)
   ;; Use CEDET tools for matlab-mode
-  (when (>= emacs-major-version 24)
-    (matlab-cedet-setup))
+  ;(when (>= emacs-major-version 24)
+    ;(matlab-cedet-setup))
 
   ;; Enable column markers at column 81 to warn of long lines
   ;; (source: http://www.emacswiki.org/emacs/download/column-marker.el)
-  (use-package column-marker :ensure t)
-  (defvar-local nispio/column-marker-column 91
-    "The column that should be highlighted as a long-line warning.")
-  (defun nispio/column-marker (&optional col)
-    "Place column-marker-1 at the column specified by `nispio/column-marker-column'"
-    (interactive)
-    (column-marker-1 (or col nispio/column-marker-column)))
-  (add-hook 'prog-mode-hook 'nispio/column-marker)
+  ;(use-package column-marker :ensure t)
+  ;(defvar-local nispio/column-marker-column 91
+    ;"The column that should be highlighted as a long-line warning.")
+  ;(defun nispio/column-marker (&optional col)
+    ;"Place column-marker-1 at the column specified by `nispio/column-marker-column'"
+    ;(interactive)
+    ;(column-marker-1 (or col nispio/column-marker-column)))
+  ;(add-hook 'prog-mode-hook 'nispio/column-marker)
 
   (use-package tex-site :ensure auctex)
   (nispio/after 'tex-site
@@ -484,8 +489,7 @@ for project root directories.")
                                ac-sources)))
     (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
 
-    (add-to-list 'ac-modes 'matlab-mode)  ; Allow auto-complete with matlab-mode
-
+    ;(add-to-list 'ac-modes 'matlab-mode)  ; Allow auto-complete with matlab-mode
     (use-package ac-helm :ensure t)
     (define-key my-map (kbd "C-.") 'ac-complete-with-helm)
     (define-key ac-complete-mode-map (kbd "C-.") 'ac-complete-with-helm)
