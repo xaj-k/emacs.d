@@ -58,18 +58,18 @@
  '(org-agenda-dim-blocked-tasks t)
  '(org-agenda-files "~/org/agenda.ini")
  '(org-agenda-ndays 10 t)
- '(org-agenda-restore-windows-after-quit t)
+ '(org-agenda-restore-windows-after-quit t t)
  '(org-agenda-show-future-repeats (quote next))
- '(org-agenda-skip-deadline-if-done nil)
- '(org-agenda-skip-scheduled-if-done nil)
+ '(org-agenda-skip-deadline-if-done nil t)
+ '(org-agenda-skip-scheduled-if-done nil t)
  '(org-agenda-span 10)
- '(org-agenda-start-on-weekday nil)
+ '(org-agenda-start-on-weekday nil t)
  '(org-agenda-time-grid
    (quote
     ((daily today require-timed)
      (800 1000 1200 1400 1600 1800)
      "......" "----------------")))
- '(org-agenda-todo-ignore-scheduled t)
+ '(org-agenda-todo-ignore-scheduled t t)
  '(org-agenda-todo-ignore-with-date t)
  '(org-blank-before-new-entry (quote ((heading . t) (plain-list-item))))
  '(org-capture-templates
@@ -106,7 +106,7 @@
       "* %?")
      ("J" "Journal (free writing)" entry
       (file+datetree "freejourn.org")
-      "* %?"))))
+      "* %?"))) t)
  '(org-completion-use-ido t t)
  '(org-directory "~/org")
  '(org-duration-format (quote (("h") (special . 2))))

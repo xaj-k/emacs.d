@@ -13,7 +13,7 @@
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)) ; Disable scroll bars
 (when (fboundp 'fringe-mode) (fringe-mode '(nil . 0))) ; Left fringes only
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))     ; Disable toolbar
-(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))     ; Disable menu bar
+;(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))     ; Disable menu bar
 
 ;; My "must-have" key bindings get set before anything can go wrong.
 (global-set-key (kbd "<C-tab>") 'next-multiframe-window)
@@ -151,6 +151,12 @@
   ;;   (local-set-key (kbd "M-F") 'forward-word)
   ;;   (local-set-key (kbd "M-B") 'backward-word))
   ;; (add-hook 'prog-mode-hook 'my-prog-mode-keys)
+
+  (defun show-file-name ()
+    "Show the absolute file name in the minibuffer."
+    (interactive)
+    (message (buffer-file-name)))
+  (global-set-key (kbd "C-c C-z") 'show-file-name)
 
   ;; Install updated org-mode from ELPA
   (use-package org :ensure org-plus-contrib)
@@ -527,16 +533,16 @@ for project root directories.")
     (add-hook 'sh-mode-hook 'sh-extra-font-lock-activate)
 
     ;; Multiple frames as tabs
-    (use-package elscreen :ensure t)
-    (customize-set-value 'elscreen-display-screen-number nil)
-    (customize-set-value 'elscreen-display-tab nil)
-    (customize-set-value 'elscreen-tab-display-control nil)
-    (customize-set-value 'elscreen-tab-display-kill-screen nil)
-    (elscreen-start)
-    (define-key my-map (kbd "C-z z") 'suspend-frame)
-    (define-key my-map (kbd "C-z f") 'elscreen-toggle-display-tab)
-    (define-key my-map (kbd "C-z F") 'elscreen-toggle-display-tab)
-    (define-key my-map (kbd "C-z C-z") 'elscreen-toggle)
+    ;(use-package elscreen :ensure t)
+    ;(customize-set-value 'elscreen-display-screen-number nil)
+    ;(customize-set-value 'elscreen-display-tab nil)
+    ;(customize-set-value 'elscreen-tab-display-control nil)
+    ;(customize-set-value 'elscreen-tab-display-kill-screen nil)
+    ;(elscreen-start)
+    ;(define-key my-map (kbd "C-z z") 'suspend-frame)
+    ;(define-key my-map (kbd "C-z f") 'elscreen-toggle-display-tab)
+    ;(define-key my-map (kbd "C-z F") 'elscreen-toggle-display-tab)
+    ;(define-key my-map (kbd "C-z C-z") 'elscreen-toggle)
 
     ;; Commands for working with regexps with visual feedback
     (use-package visual-regexp :ensure t)
